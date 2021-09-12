@@ -29,7 +29,7 @@ namespace StoreAPI.Models
         public int POSnum { get; set; }
 
         [ForeignKey("User")]
-        public int POSUser { get; set; }
+        public Guid POSUser { get; set; }
 
         [BsonDateTimeOptions(Kind = DateTimeKind.Local, Representation = BsonType.Document)]
         public DateTime? DateCreated { get; set; }

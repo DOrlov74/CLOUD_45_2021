@@ -1,4 +1,6 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using AspNetCore.Identity.MongoDbCore.Models;
+using MongoDB.Bson.Serialization.Attributes;
+using MongoDbGenericRepository.Attributes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,29 +10,30 @@ using System.Threading.Tasks;
 
 namespace StoreAPI.Models
 {
-    public class User:Person
+    [CollectionName("Users")]
+    public class User:MongoIdentityUser<Guid>
     {
         public User()
         {
             Sales = new HashSet<Sale>();
         }
 
-        [BsonId]
+        //[BsonId]
 
-        public override int Id { get => base.Id; set => base.Id = value; }
+        //public int Id { get; set; }
 
         [BsonRequired]
         [MaxLength(60)]
-        public override string Name { get => base.Name; set => base.Name = value; }
+        public string Name { get; set; }
         [BsonElement("Address")]
         [MaxLength(120)]
-        public override string Address { get => base.Address; set => base.Address = value; }
+        public string Address { get; set; }
         [BsonElement("City")]
         [MaxLength(60)]
-        public override string City { get => base.City; set => base.City = value; }
-        [BsonElement("Email")]
-        [MaxLength(50)]
-        public override string Email { get => base.Email; set => base.Email = value; }
+        public string City { get; set; }
+        //[BsonElement("Email")]
+        //[MaxLength(50)]
+        //public string Email { get; set; }
 
         [BsonRequired]
         [StringLength(9)]

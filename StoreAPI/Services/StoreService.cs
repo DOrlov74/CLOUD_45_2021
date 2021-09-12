@@ -64,7 +64,7 @@ namespace StoreAPI.Services
         public List<User> GetUsers() =>
             _users.Find(user => true).ToList();
 
-        public User GetUser(int id) =>
+        public User GetUser(Guid id) =>
             _users.Find(user => user.Id == id).FirstOrDefault();
 
         public User CreateUser(User user)
@@ -73,13 +73,13 @@ namespace StoreAPI.Services
             return user;
         }
 
-        public void UpdateUser(int id, User userIn) =>
+        public void UpdateUser(Guid id, User userIn) =>
             _users.ReplaceOne(user => user.Id == id, userIn);
 
         public void RemoveUser(User userIn) =>
             _users.DeleteOne(user => user.Id == userIn.Id);
 
-        public void RemoveUser(int id) =>
+        public void RemoveUser(Guid id) =>
             _users.DeleteOne(user => user.Id == id);
 
         //  Stocks collection
@@ -163,7 +163,7 @@ namespace StoreAPI.Services
         public Sale CreateSale(Sale sale)
         {
             _sales.InsertOne(sale);
-            if (sale.POSUser != 0)
+            if (sale.POSUser != Guid.Empty)
             {
                 User userIn = _users.Find(user => user.Id == sale.POSUser).FirstOrDefault();
                 userIn.Sales.Add(sale);
@@ -181,7 +181,7 @@ namespace StoreAPI.Services
         public void UpdateSale(int id, Sale saleIn)
         {
             Sale oldSale = _sales.Find(sale => sale.SaleId == id).FirstOrDefault();
-            if ((saleIn.POSUser != oldSale.POSUser && saleIn.POSUser != 0) || (saleIn.POSnum != oldSale.POSnum && saleIn.POSnum != 0))
+            if ((saleIn.POSUser != oldSale.POSUser && saleIn.POSUser != Guid.Empty) || (saleIn.POSnum != oldSale.POSnum && saleIn.POSnum != 0))
             {
                 //  Update User
                 User oldUser = _users.Find(user => user.Id == oldSale.POSUser).FirstOrDefault();
@@ -203,7 +203,7 @@ namespace StoreAPI.Services
 
         public void RemoveSale(Sale saleIn)
         {
-            if (saleIn.POSUser != 0)
+            if (saleIn.POSUser != Guid.Empty)
             {
                 User userIn = _users.Find(user => user.Id == saleIn.POSUser).FirstOrDefault();
                 userIn.Sales.Remove(userIn.Sales.First(sale => sale.POSUser == saleIn.POSUser));

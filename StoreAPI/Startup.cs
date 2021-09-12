@@ -32,6 +32,7 @@ namespace StoreAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var settings = Configuration.GetSection(nameof(DatabaseSettings)).Get<DatabaseSettings>();
             // requires using Microsoft.Extensions.Options
             services.Configure<DatabaseSettings>(
                 Configuration.GetSection(nameof(DatabaseSettings)));
@@ -54,6 +55,12 @@ namespace StoreAPI
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "StoreAPI", Version = "v1" });
             });
 
+            services.AddIdentity<User, Role>()
+                .AddMongoDbStores<User, Role, Guid>
+                (
+                    settings.ConnectionString, settings.DatabaseName
+                );
+
             //services.AddAuthentication("Bearer")
             //    .AddJwtBearer("Bearer", options =>
             //    {
@@ -70,7 +77,7 @@ namespace StoreAPI
             //services.AddDatabaseDeveloperPageExceptionFilter();
             //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
             //    .AddEntityFrameworkStores<ApplicationDbContext>();
-            //services.AddRazorPages();
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -108,7 +115,9 @@ namespace StoreAPI
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
                 //endpoints.MapRazorPages();
             });
         }
