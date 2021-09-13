@@ -23,6 +23,7 @@ namespace StoreAPI.Models
         public string PaymentsCollection { get; set; }
         public string PaymentTypesCollection { get; set; }
         public string FamiliesCollection { get; set; }
+        public string PhotosCollection { get; set; }
     }
 
     public interface IDatabaseSettings
@@ -43,5 +44,6 @@ namespace StoreAPI.Models
         string PaymentsCollection { get; set; }
         string PaymentTypesCollection { get; set; }
         string FamiliesCollection { get; set; }
+        string PhotosCollection { get; set; }
     }
 }

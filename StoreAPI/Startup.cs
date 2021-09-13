@@ -16,6 +16,7 @@ using Microsoft.OpenApi.Models;
 //using Microsoft.IdentityModel.Tokens;
 using StoreAPI.Data;
 using StoreAPI.Models;
+using StoreAPI.Photos;
 using StoreAPI.Services;
 using System;
 using System.Collections.Generic;
@@ -43,6 +44,8 @@ namespace StoreAPI
                 Configuration.GetSection(nameof(DatabaseSettings)));
             services.Configure<CollectionNames>(
                 Configuration.GetSection(nameof(CollectionNames)));
+            services.Configure<CloudinarySettings>(
+                Configuration.GetSection(nameof(CloudinarySettings)));
 
             services.AddSingleton<IDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
@@ -79,6 +82,7 @@ namespace StoreAPI
                     };
                 });
             services.AddScoped<TokenService>();
+            services.AddScoped<IPhotoAccessor, PhotoAccessor>();
 
             //services.AddAuthentication("Bearer")
             //    .AddJwtBearer("Bearer", options =>

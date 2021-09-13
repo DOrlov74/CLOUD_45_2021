@@ -21,6 +21,7 @@ namespace StoreAPI.Services
         private readonly IMongoCollection<Payment> _payments;
         private readonly IMongoCollection<PaymentType> _paymentTypes;
         private readonly IMongoCollection<Family> _families;
+        private readonly IMongoCollection<Photo> _photos;
 
         public StoreService(IDatabaseSettings settings, ICollectionNames collections)
         {
@@ -37,6 +38,7 @@ namespace StoreAPI.Services
             _payments = database.GetCollection<Payment>(collections.PaymentsCollection);
             _paymentTypes = database.GetCollection<PaymentType>(collections.PaymentTypesCollection);
             _families = database.GetCollection<Family>(collections.FamiliesCollection);
+            _photos = database.GetCollection<Photo>(collections.PhotosCollection);
         }
         //  Stores collection
         public List<Store> GetStores() =>
@@ -494,5 +496,57 @@ namespace StoreAPI.Services
 
         public void RemoveFamily(string id) =>
             _families.DeleteOne(family => family.FamilyId == id);
+
+        //  Photos collection
+        public List<Photo> GetPhotos() =>
+            _photos.Find(photo => true).ToList();
+
+        public Photo GetPhoto(string id) =>
+            _photos.Find(photo => photo.Id == id).FirstOrDefault();
+
+        public Photo CreatePhoto(Photo photo)
+        {
+            _photos.InsertOne(photo);
+            if (photo.UserId != Guid.Empty)
+            {
+                User userIn = _users.Find(user => user.Id == photo.UserId).FirstOrDefault();
+                userIn.Photos.Add(photo);
+                _users.ReplaceOne(user => user.Id == userIn.Id, userIn);
+            }
+            return photo;
+        }
+
+        public void UpdatePhoto(string id, Photo photoIn)
+        {
+            Photo oldPhoto = _photos.Find(photo => photo.Id == id).FirstOrDefault();
+            if (photoIn.UserId != oldPhoto.UserId && photoIn.UserId != Guid.Empty)
+            {
+                //  Update User
+                User oldUser = _users.Find(user => user.Id == oldPhoto.UserId).FirstOrDefault();
+                oldUser.Photos.Remove(oldUser.Photos.First(photo => photo.Id == oldPhoto.Id));
+                _users.ReplaceOne(user => user.Id == oldUser.Id, oldUser);
+                User userIn = _users.Find(user => user.Id == photoIn.UserId).FirstOrDefault();
+                userIn.Photos.Add(photoIn);
+                _users.ReplaceOne(user => user.Id == userIn.Id, userIn);
+            }
+            _photos.ReplaceOne(photo => photo.Id == id, photoIn);
+        }
+
+        public void RemovePhoto(Photo photoIn)
+        {
+            if (photoIn.UserId != Guid.Empty)
+            {
+                User userIn = _users.Find(user => user.Id == photoIn.UserId).FirstOrDefault();
+                userIn.Photos.Remove(userIn.Photos.First(photo => photo.Id == photoIn.Id));
+                _users.ReplaceOne(user => user.Id == userIn.Id, userIn);
+            }
+            _photos.DeleteOne(photo => photo.Id == photoIn.Id);
+        }
+
+        public void Removephoto(string id)
+        {
+            Photo photoIn = _photos.Find(photo => photo.Id == id).FirstOrDefault();
+            RemovePhoto(photoIn);
+        }
     }
 }
