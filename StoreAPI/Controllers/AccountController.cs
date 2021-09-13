@@ -35,7 +35,7 @@ namespace StoreAPI.Controllers
             return View();
         }
 
-        [HttpGet]
+        [HttpGet("currentuser")]
         [Authorize]
         public async Task<ActionResult<User>> GetCurrentUser()
         {
@@ -95,11 +95,12 @@ namespace StoreAPI.Controllers
             return BadRequest("Problem with registering user");
         }
 
-            [Authorize]
+        [HttpGet("logout")]
+        [Authorize]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            return RedirectToAction("Index", "Home");
+            return Ok();
         }
     }
 }

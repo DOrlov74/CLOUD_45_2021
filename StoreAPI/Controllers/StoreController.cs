@@ -36,7 +36,7 @@ namespace StoreAPI.Controllers
          }
 
         [HttpPost]
-        public ActionResult<Store> Create(Store store)
+        public ActionResult<Store> Create([FromBody] Store store)
         {
             if (!ModelState.IsValid)
             {
@@ -44,11 +44,11 @@ namespace StoreAPI.Controllers
             }
             _storeService.CreateStore(store);
             //return CreatedAtRoute("GetStore", new { id = store.Id.ToString() }, store);
-            return Ok(store.Id);
+            return Ok(store);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(string id, Store storeIn)
+        public IActionResult Update(string id, [FromBody] Store storeIn)
         {
             var store = _storeService.GetStore(id);
             if (store == null)
