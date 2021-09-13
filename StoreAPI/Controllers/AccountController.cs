@@ -45,11 +45,10 @@ namespace StoreAPI.Controllers
 
         [HttpPost("login")]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(User user)
+        public async Task<IActionResult> Login([FromBody]User user)
         {
             User appUser = await _userManager.FindByEmailAsync(user.Email);
-            if (appUser != null)
+            if (appUser == null)
             {
                 return Unauthorized();
             }
@@ -57,13 +56,17 @@ namespace StoreAPI.Controllers
             if (result.Succeeded)
             {
                 appUser.Token = _tokenService.CreateToken(appUser);
-                return Ok(appUser);
+                var updateResult = await _userManager.UpdateAsync(appUser);
+                if (updateResult.Succeeded)
+                {
+                    return Ok(appUser);
+                }
             }
             return Unauthorized();
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<User>> Register(User user)
+        public async Task<ActionResult<User>> Register([FromBody] User user)
         { 
             if (_userManager.Users.Any(u => u.Email == user.Email))
             {
@@ -71,7 +74,7 @@ namespace StoreAPI.Controllers
             }
             if (_userManager.Users.Any(u => u.UserName == user.UserName))
             {
-                return BadRequest("Email is taken");
+                return BadRequest("Name is taken");
             }
             var appUser = new User
             {
