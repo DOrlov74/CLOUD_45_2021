@@ -22,9 +22,9 @@ namespace StoreAPI.Models
 
         //public int Id { get; set; }
 
-        [BsonRequired]
-        [MaxLength(60)]
-        public string Name { get; set; }
+        //[BsonRequired]
+        //[MaxLength(60)]
+        //public string Name { get; set; }
         [BsonElement("Address")]
         [MaxLength(120)]
         public string Address { get; set; }
@@ -35,13 +35,15 @@ namespace StoreAPI.Models
         //[MaxLength(50)]
         //public string Email { get; set; }
 
-        [BsonRequired]
+        //[BsonRequired]
         [StringLength(9)]
         public string Phone { get; set; }
 
         [BsonRequired]
         [StringLength(25)]
         public string Password { get; set; }
+
+        public string Token { get; set; }
 
         public virtual ICollection<Sale> Sales { get; set; } 
     }

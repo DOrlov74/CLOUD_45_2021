@@ -24,7 +24,7 @@ namespace StoreAPI.Controllers
         [HttpGet]
         public ActionResult<List<Store>> Get() => _storeService.GetStores();
 
-        [HttpGet("{id:length(5)}", Name = "GetStore")]
+        [HttpGet("{id}", Name = "GetStore")]
         public ActionResult<Store> Get(string id) 
         {
             var store = _storeService.GetStore(id);
@@ -47,7 +47,7 @@ namespace StoreAPI.Controllers
             return Ok(store.Id);
         }
 
-        [HttpPut("{id:length(5)}")]
+        [HttpPut("{id}")]
         public IActionResult Update(string id, Store storeIn)
         {
             var store = _storeService.GetStore(id);
@@ -59,7 +59,7 @@ namespace StoreAPI.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id:length(5)}")]
+        [HttpDelete("{id}")]
         public IActionResult Delete(string id)
         {
             var store = _storeService.GetStore(id);

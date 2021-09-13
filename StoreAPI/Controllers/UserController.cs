@@ -34,7 +34,7 @@ namespace StoreAPI.Controllers
             {
                 User appUser = new User
                 {
-                    Name = user.Name,
+                    UserName = user.UserName,
                     Email = user.Email
                 };
                 IdentityResult result = await _userManager.CreateAsync(appUser, user.Password);
