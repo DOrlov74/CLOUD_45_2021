@@ -53,6 +53,9 @@ namespace StoreAPI
             services.AddSingleton<ICollectionNames>(sp =>
                 sp.GetRequiredService<IOptions<CollectionNames>>().Value);
 
+            services.AddSingleton<ICloudinarySettings>(sp =>
+                sp.GetRequiredService<IOptions<CloudinarySettings>>().Value);
+
             services.AddSingleton<StoreService>();
 
             services.AddControllers()

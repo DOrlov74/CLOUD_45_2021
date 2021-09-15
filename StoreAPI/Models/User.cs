@@ -16,6 +16,7 @@ namespace StoreAPI.Models
         public User()
         {
             Sales = new HashSet<Sale>();
+            Photos = new HashSet<Photo>();
         }
 
         //[BsonId]
@@ -46,6 +47,6 @@ namespace StoreAPI.Models
         public string Token { get; set; }
 
         public virtual ICollection<Sale> Sales { get; set; } 
-        public ICollection<Photo> Photos { get; set; }
+        public virtual ICollection<Photo> Photos { get; set; }
     }
 }

@@ -13,13 +13,13 @@ namespace StoreAPI.Photos
     public class PhotoAccessor : IPhotoAccessor
     {
         private readonly Cloudinary _cloudinary;
-        public PhotoAccessor(IOptions<CloudinarySettings> config)
+        public PhotoAccessor(ICloudinarySettings config)
         {
             var account = new Account
             (
-                config.Value.CloudName,
-                config.Value.ApiKey,
-                config.Value.ApiSecret
+                config.CloudName,
+                config.ApiKey,
+                config.ApiSecret
              );
             _cloudinary = new Cloudinary(account);
         }

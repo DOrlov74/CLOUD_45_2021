@@ -543,7 +543,7 @@ namespace StoreAPI.Services
             _photos.DeleteOne(photo => photo.Id == photoIn.Id);
         }
 
-        public void Removephoto(string id)
+        public void RemovePhoto(string id)
         {
             Photo photoIn = _photos.Find(photo => photo.Id == id).FirstOrDefault();
             RemovePhoto(photoIn);
