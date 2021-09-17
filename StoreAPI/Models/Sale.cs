@@ -14,6 +14,7 @@ namespace StoreAPI.Models
         public Sale()
         {
             SalesDetails = new HashSet<SalesDetail>();
+            Payments = new HashSet<Payment>();
         }
 
         [BsonId]
@@ -49,6 +50,6 @@ namespace StoreAPI.Models
         [BsonIgnore]
         public virtual User User { get; set; }
 
-        public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
+        public virtual ICollection<Payment> Payments { get; set; } 
     }
 }

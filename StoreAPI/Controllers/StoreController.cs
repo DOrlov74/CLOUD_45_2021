@@ -42,6 +42,7 @@ namespace StoreAPI.Controllers
             {
                 return BadRequest();
             }
+            store.CreatedDate = DateTime.Now;
             _storeService.CreateStore(store);
             //return CreatedAtRoute("GetStore", new { id = store.Id.ToString() }, store);
             return Ok(store);
@@ -55,6 +56,7 @@ namespace StoreAPI.Controllers
             {
                 return NotFound();
             }
+            storeIn.ModifiedDate = DateTime.Now;
             _storeService.UpdateStore(id, storeIn);
             return NoContent();
         }
