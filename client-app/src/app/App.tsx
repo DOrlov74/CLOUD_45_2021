@@ -6,10 +6,14 @@ import api from './api';
 import Loading from '../components/loading';
 import StoreList from '../components/StoreList';
 import StoreForm from '../components/StoreForm';
+import UserProvider from '../components/UserProvider';
+import LoginForm from '../components/LoginForm';
+import { UserDto } from '../models/user';
 
 
 function App() {
   const [activeItem, setActiveItem]=useState<string>('home');
+  const [userdto, setUser]=useState<UserDto|null>(null);
   const [stores, setStores]=useState<Store[]>([]);
   const [selectedStore, setSelectedStore]=useState<Store|undefined>(undefined);
   const [editMode, setEditMode]=useState(false);
@@ -24,6 +28,8 @@ function App() {
   }, [])
 
   function handleItemClick(item: string){
+    if (item == 'login') setEditMode(true);
+    if (item == 'logout') handleLogout();
     setActiveItem(item);
   }
 
@@ -68,15 +74,37 @@ function App() {
     })
   }
 
+  function handleLogin(user: UserDto){
+    setSubmiting(true);
+    api.Account.login(user).then(()=>{
+      setUser(user);
+      console.log(user);
+      })
+    setEditMode(false);
+    setSubmiting(false);
+    setActiveItem('home');   
+  }
+
+  function handleLogout(){
+    api.Account.logout().then(()=>{
+      setUser(null);
+      console.log('Successfully loged out');
+      })
+    setActiveItem('home');   
+  }
+
   if (loading) return <Loading content='Loading App ...'/>
+  if (activeItem == 'login' && editMode) return <LoginForm userdto={userdto} login={handleLogin} closeForm={handleFormClose} submitting={submiting}/>
   return (
     <div className="App">
-      <NavBar activeItem={activeItem} handleItemClick={handleItemClick} openForm={handleFormOpen}/>
-      <Container style={{marginTop:'7em'}}>
-        <StoreList stores={stores} openForm={handleFormOpen} deleteStore={handleDeleteStore} submitting={submiting}/>
-        {editMode &&
-        <StoreForm store={selectedStore} closeForm={handleFormClose} editStore={handleEditStore} submitting={submiting}/>}
-      </Container>
+      <UserProvider>
+        <NavBar activeItem={activeItem} handleItemClick={handleItemClick} openForm={handleFormOpen}/>
+        <Container style={{marginTop:'7em'}}>
+          <StoreList stores={stores} openForm={handleFormOpen} deleteStore={handleDeleteStore} submitting={submiting}/>
+          {editMode &&
+          <StoreForm store={selectedStore} closeForm={handleFormClose} editStore={handleEditStore} submitting={submiting}/>}
+        </Container>
+      </UserProvider>
     </div>
   );
 }

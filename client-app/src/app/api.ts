@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 import { Store } from '../models/store';
+import { User, UserDto } from '../models/user';
 
 const sleep=(delay: number)=>{
     return new Promise((resolve)=>{
@@ -30,7 +31,14 @@ const Stores={
     update: (store: Store)=>requests.put<Store>(`/store/${store.Id}`, store),
     delete: (id: string)=>requests.del<Store>(`/store/${id}`)
 }
+const Account={
+    current: ()=>requests.get<User>('/account'),
+    login: (user: UserDto)=>requests.post<UserDto>('/login', user),
+    register: (user: User)=>requests.post<User>('/register', user),
+    logout: ()=>requests.get('/logout')
+}
 const api={
-    Stores
+    Stores,
+    Account
 }
 export default api;

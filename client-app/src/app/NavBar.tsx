@@ -1,5 +1,6 @@
 import React from "react";
 import { Button, Container, Menu } from "semantic-ui-react";
+import { UserContext } from "../components/UserProvider";
 
 interface Props{
     activeItem: string;
@@ -8,6 +9,7 @@ interface Props{
 }
 
 export default function NavBar({activeItem='home', handleItemClick, openForm}: Props){
+    const userCtx=React.useContext(UserContext);
     return(
         <Menu pointing secondary>
             <Container>
@@ -25,11 +27,21 @@ export default function NavBar({activeItem='home', handleItemClick, openForm}: P
                     onClick={openForm}/>
                 </Menu.Item>
                 <Menu.Menu position='right'>
+                <Menu.Item>
+                    {userCtx?.username}
+                </Menu.Item>
+                {/* {(userCtx?.username != null)? */}
                 <Menu.Item
                     name='logout'
                     active={activeItem === 'logout'}
                     onClick={()=>handleItemClick('logout')}
+                    />: 
+                <Menu.Item
+                    name='login'
+                    active={activeItem === 'login'}
+                    onClick={()=>handleItemClick('login')}
                     />
+                    {/* } */}
                 </Menu.Menu>
             </Container>
         </Menu>

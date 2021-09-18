@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace StoreAPI.Controllers
 {
+    [Route("api")]
     public class AccountController : Controller
     {
         private readonly UserManager<User> _userManager;
@@ -25,22 +26,26 @@ namespace StoreAPI.Controllers
             _signInManager = signInManager;
             _tokenService = tokenService;
         }
-        public IActionResult Login()
-        {
-            return View();
-        }
+        //public IActionResult Login()
+        //{
+        //    return View();
+        //}
 
-        public IActionResult AccessDenied()
-        {
-            return View();
-        }
+        //public IActionResult AccessDenied()
+        //{
+        //    return View();
+        //}
 
-        [HttpGet("currentuser")]
-        [Authorize]
+        [HttpGet("account")]
+        //[Authorize]
         public async Task<ActionResult<User>> GetCurrentUser()
         {
+            if (User.FindFirstValue(ClaimTypes.Email) == null) 
+            {
+                return NotFound();
+            }
             var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
-            return user;
+            return Ok(user);
         }
 
         [HttpPost("login")]

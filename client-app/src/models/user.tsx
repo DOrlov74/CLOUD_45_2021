@@ -7,3 +7,10 @@ export interface User {
     city: string;
     token: string;
 }
+
+export interface UserDto {
+    username: string;
+    email: string;
+    password: string;
+}
+
