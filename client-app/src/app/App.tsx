@@ -1,16 +1,18 @@
 import React, {useEffect, useState} from 'react';
 import {Store} from '../models/store'
-import { Container, List, MenuItem } from 'semantic-ui-react';
+import { Container } from 'semantic-ui-react';
 import NavBar from './NavBar';
 import api from './api';
 import Loading from '../components/loading';
 import StoreList from '../components/StoreList';
 import StoreForm from '../components/StoreForm';
-import UserProvider from '../components/UserProvider';
 import LoginForm from '../components/LoginForm';
 import { UserDto } from '../models/user';
 import { Route } from 'react-router';
 import HomePage from '../components/HomePage';
+import RegisterForm from '../components/RegisterForm';
+import ProductList from '../components/ProductList';
+import ProductForm from '../components/ProductForm';
 
 
 function App() {
@@ -37,7 +39,10 @@ function App() {
           <Route exact path='/' component={HomePage}/>
           <Route path='/store' component={StoreList}/>
           <Route path={['/newstore', '/editstore/:id']} component={StoreForm}/>
+          <Route path='/product' component={ProductList}/>
+          <Route path={['/newproduct', '/editproduct/:id']} component={ProductForm}/>
           <Route path='/login' component={LoginForm}/>
+          <Route path='/register' component={RegisterForm}/>
         </Container>
     </div>
   );

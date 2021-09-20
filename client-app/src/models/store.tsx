@@ -9,3 +9,11 @@ export interface Store {
     Pos: Pos[];
     Stocks: Stock[];
 }
+
+export interface StoreDto {
+    StoreName: string;
+    StoreAddress: string;
+    Active: boolean;
+    Pos: Pos[];
+    Stocks: Stock[];
+}

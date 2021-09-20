@@ -3,7 +3,7 @@ export interface SalesDetail {
     SaleID: string;
     Seq: string;
     Product: string;
-    Quantity: string;
-    UnitPrice: string;
-    LineTotal: string;
+    Quantity: number;
+    UnitPrice: number|null;
+    LineTotal: number;
 }

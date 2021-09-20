@@ -20,23 +20,31 @@ export default function NavBar({activeItem='home', logout}: Props){
                 </Menu.Item>
                 <Menu.Item as={NavLink} to='/store' name='stores' 
                     active={activeItem === 'stores'}/>
+                <Menu.Item as={NavLink} to='/product' name='products' 
+                    active={activeItem === 'products'}/>
                 <Menu.Item>
                     <Button as={NavLink} to='/newstore' positive content='Create Store'/>
+                </Menu.Item>
+                <Menu.Item>
+                    <Button as={NavLink} to='/newproduct' positive content='Create Product'/>
                 </Menu.Item>
                 <Menu.Menu position='right'>
                 <Menu.Item>
                     {userCtx.user === null ? "" : userCtx.user.username}
                 </Menu.Item>
-                {/* {(userCtx?.username != null)? */}
+                {(userCtx.user != null)?
                 <Menu.Item
                     name='logout'
                     active={activeItem === 'logout'}
                     onClick={logout}
-                    />: 
+                    />: <>
                 <Menu.Item as={NavLink} to='/login'
                     name='login'
                     active={activeItem === 'login'}/>
-                    {/* } */}
+                <Menu.Item as={NavLink} to='/register'
+                    name='register'
+                    active={activeItem === 'register'}/>
+                    </>} 
                 </Menu.Menu>
             </Container>
         </Menu>

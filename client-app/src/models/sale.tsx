@@ -13,4 +13,5 @@ export interface Sale {
 export interface SaleContext {
     userSales: Sale[];
     activeSale: Sale|null;
+    setSale: any;
 }

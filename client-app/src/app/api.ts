@@ -1,5 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
+import { Product } from '../models/product';
 import { Sale } from '../models/sale';
+import { SalesDetail } from '../models/salesdetail';
 import { Store } from '../models/store';
 import { User, UserDto } from '../models/user';
 
@@ -41,6 +43,20 @@ const Sales={
     update: (sale: Sale)=>requests.put<Sale>(`/sale/${sale.Id}`, sale),
     delete: (id: string)=>requests.del<Sale>(`/sale/${id}`)
 }
+const SalesDetails={
+    list: ()=>requests.getList<SalesDetail[]>('/salesdetail'),
+    details: (id: string)=>requests.get<SalesDetail>(`/salesdetail/${id}`),
+    create: (salesDetail: SalesDetail)=>requests.post<SalesDetail>('/salesdetail', salesDetail),
+    update: (salesDetail: SalesDetail)=>requests.put<SalesDetail>(`/salesdetail/${salesDetail.Id}`, salesDetail),
+    delete: (id: string)=>requests.del<SalesDetail>(`/salesdetail/${id}`)
+}
+const Products={
+    list: ()=>requests.getList<Product[]>('/product'),
+    details: (id: string)=>requests.get<Product>(`/product/${id}`),
+    create: (sale: Product)=>requests.post<Product>('/product', sale),
+    update: (sale: Product)=>requests.put<Product>(`/product/${sale.ProductId}`, sale),
+    delete: (id: string)=>requests.del<Product>(`/product/${id}`)
+}
 const Users={
     list: ()=>requests.getList<User[]>('/user'),
     details: (id: string)=>requests.get<User>(`/user/${id}`),
@@ -50,13 +66,15 @@ const Users={
 }
 const Account={
     current: ()=>requests.get<User>('/account'),
-    login: (user: UserDto)=>requests.post<UserDto>('/login', user),
-    register: (user: User)=>requests.post<User>('/register', user),
+    login: (user: UserDto)=>requests.post<User>('/login', user),
+    register: (user: UserDto)=>requests.post<User>('/register', user),
     logout: ()=>requests.get('/logout')
 }
 const api={
     Stores,
     Sales,
+    SalesDetails,
+    Products,
     Users,
     Account
 }

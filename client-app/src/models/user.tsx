@@ -11,6 +11,11 @@ export interface User {
     token: string;
     sales: Sale[];
     photos: Photo[];
+    roles: Role[]
+}
+
+export interface Role {
+    RoleName: string;
 }
 
 export interface UserDto {

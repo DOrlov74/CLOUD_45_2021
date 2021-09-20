@@ -32,8 +32,11 @@ export default function UserProvider({children}: Props){
         //     console.log(data);
         //     setUser(data);
         // })
-        
-        api.Account.current()
+        getCurrentUser();
+      }, [user])
+
+    async function getCurrentUser(){
+        await api.Account.current()
         .then(response => {
             console.log(response);
             setUser(response);
@@ -41,7 +44,7 @@ export default function UserProvider({children}: Props){
         .catch((err)=>{
             console.log(err);
         });
-      }, [user])
+    }
 
     return(
         <UserContext.Provider value={{user}}>
