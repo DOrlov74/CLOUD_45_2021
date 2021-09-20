@@ -4,9 +4,18 @@ import 'semantic-ui-css/semantic.min.css';
 import './app/style.css';
 import App from './app/App';
 import reportWebVitals from './reportWebVitals';
+import { BrowserRouter } from 'react-router-dom';
+import UserProvider from './components/UserProvider';
+import CartProvider from './components/CartProvider';
 
 ReactDOM.render(
-    <App />,
+  <UserProvider>
+    <CartProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </CartProvider>
+  </UserProvider>,
   document.getElementById('root')
 );
 

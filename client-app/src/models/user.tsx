@@ -1,3 +1,6 @@
+import { Photo } from "./photo";
+import { Sale } from "./sale";
+
 export interface User {
     id: string;
     username: string;
@@ -6,6 +9,8 @@ export interface User {
     address: string;
     city: string;
     token: string;
+    sales: Sale[];
+    photos: Photo[];
 }
 
 export interface UserDto {
@@ -14,3 +19,6 @@ export interface UserDto {
     password: string;
 }
 
+export interface UserContextType {
+    user: User|null;
+}

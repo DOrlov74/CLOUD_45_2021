@@ -1,46 +1,41 @@
 import React from "react";
-import { Button, Container, Menu } from "semantic-ui-react";
+import { NavLink } from "react-router-dom";
+import { Button, Container, Header, Menu } from "semantic-ui-react";
 import { UserContext } from "../components/UserProvider";
 
 interface Props{
     activeItem: string;
-    handleItemClick: (name: string)=>void;
-    openForm: ()=>void;
+    logout: ()=>void;
 }
 
-export default function NavBar({activeItem='home', handleItemClick, openForm}: Props){
+export default function NavBar({activeItem='home', logout}: Props){
     const userCtx=React.useContext(UserContext);
     return(
         <Menu pointing secondary>
             <Container>
-                <Menu.Item header name='home'
-                    active={activeItem === 'home'}
-                    onClick={()=>handleItemClick('home')}>
+                <Menu.Item as={NavLink} to='/' exact header name='home'
+                    active={activeItem === 'home'}>
                     <img src="/assets/logo.png" alt="logo" style={{marginRight:"10px"}}/>
-                    Garden Shop
+                    <Header as='h3'>Garden Shop</Header>
                 </Menu.Item>
-                <Menu.Item name='stores' 
-                    active={activeItem === 'stores'}
-                    onClick={()=>handleItemClick('stores')}/>
+                <Menu.Item as={NavLink} to='/store' name='stores' 
+                    active={activeItem === 'stores'}/>
                 <Menu.Item>
-                    <Button positive content='Create Store'
-                    onClick={openForm}/>
+                    <Button as={NavLink} to='/newstore' positive content='Create Store'/>
                 </Menu.Item>
                 <Menu.Menu position='right'>
                 <Menu.Item>
-                    {userCtx?.username}
+                    {userCtx.user === null ? "" : userCtx.user.username}
                 </Menu.Item>
                 {/* {(userCtx?.username != null)? */}
                 <Menu.Item
                     name='logout'
                     active={activeItem === 'logout'}
-                    onClick={()=>handleItemClick('logout')}
+                    onClick={logout}
                     />: 
-                <Menu.Item
+                <Menu.Item as={NavLink} to='/login'
                     name='login'
-                    active={activeItem === 'login'}
-                    onClick={()=>handleItemClick('login')}
-                    />
+                    active={activeItem === 'login'}/>
                     {/* } */}
                 </Menu.Menu>
             </Container>

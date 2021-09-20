@@ -26,14 +26,14 @@ namespace StoreAPI.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public ActionResult<List<User>> Get()
         {
             return _storeService.GetUsers();
         }
 
         [HttpGet("{id}", Name = "GetUser")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public ActionResult<User> Get(Guid id)
         {
             var user = _storeService.GetUser(id);

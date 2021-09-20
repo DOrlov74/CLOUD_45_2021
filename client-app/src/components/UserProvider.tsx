@@ -1,7 +1,12 @@
 import React, { createContext, useEffect, useState } from "react";
 import api from "../app/api";
-import { User } from "../models/user";
-export const UserContext=createContext<User|null>(null);
+import { User, UserContextType } from "../models/user";
+
+const userContextDefault: UserContextType = {
+    user: null
+}
+
+export const UserContext=createContext<UserContextType>(userContextDefault);
 
 interface Props{
     children: React.ReactNode;
@@ -28,17 +33,18 @@ export default function UserProvider({children}: Props){
         //     setUser(data);
         // })
         
-        api.Account.current().then(response => {
-          console.log(response);
-          setUser(response);
+        api.Account.current()
+        .then(response => {
+            console.log(response);
+            setUser(response);
         })
         .catch((err)=>{
             console.log(err);
         });
-      }, [])
+      }, [user])
 
     return(
-        <UserContext.Provider value={user}>
+        <UserContext.Provider value={{user}}>
             {children}
         </UserContext.Provider>
     );

@@ -9,3 +9,8 @@ export interface Sale {
     Paid: boolean;
     SalesDetails: SalesDetail[];
 }
+
+export interface SaleContext {
+    userSales: Sale[];
+    activeSale: Sale|null;
+}

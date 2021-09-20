@@ -1,20 +1,29 @@
-import React, { SyntheticEvent, useState } from "react";
+import React, { SyntheticEvent, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { Button, Card, Header, Image } from "semantic-ui-react";
+import api from "../app/api";
 import { Store } from "../models/store";
 
-interface Props{
-    stores: Store[];
-    openForm: (id:string)=>void;
-    deleteStore: (id: string)=>void;
-    submitting: boolean;
-}
-
-export default function StoreList({stores, openForm, deleteStore, submitting}: Props) {
+export default function StoreList() {
     const [target, setTarget] = useState('');
+    const [stores, setStores]=useState<Store[]>([]);
+    const [selectedStore, setSelectedStore]=useState<Store|undefined>(undefined);
+    const [submiting, setSubmiting]=useState(false);
+    useEffect(() => {
+        api.Stores.list().then(response => {
+          console.log(response);
+          setStores(response);
+        })
+      }, [])
     function handleDeleteStore(e: SyntheticEvent<HTMLButtonElement>, id:string){
         setTarget(e.currentTarget.name);
-        deleteStore(id);
+        setSubmiting(true);
+        api.Stores.delete(id).then(()=>{
+        setStores([...stores.filter(s=>s.Id !== id)]);
+        setSubmiting(false);
+        });
     }
+      
     return(
         <>
             <Header as='h1'>The stores</Header>
@@ -38,10 +47,10 @@ export default function StoreList({stores, openForm, deleteStore, submitting}: P
                         <Button basic color='yellow'>
                             View Stock
                         </Button>
-                        <Button onClick={()=>openForm(store.Id)} basic color='green'>
+                        <Button as={Link} to={`/editstore/${store.Id}`} basic color='green'>
                             Edit
                         </Button>
-                        <Button name={store.Id} loading={submitting && target === store.Id} onClick={(e)=>handleDeleteStore(e,store.Id)} basic color='red'>
+                        <Button name={store.Id} loading={submiting && target === store.Id} onClick={(e)=>handleDeleteStore(e,store.Id)} basic color='red'>
                             Delete
                         </Button>
                         </div>
