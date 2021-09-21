@@ -9,6 +9,11 @@ resources:
 - repo: self
 
 variables:
+  azureSubscription: 'Azure2021'
+  appName: 'cloud452021app'
+  containerRegistry: 'cloud452021acr.azurecr.io'
+  dockerRegistryServiceConnection: 'aee653ab-e667-4438-b221-d85397c73f8c'
+  imageRepository: 'cloud452021'
   tag: '$(Build.BuildId)'
 
 stages:
@@ -21,9 +26,19 @@ stages:
       vmImage: ubuntu-latest
     steps:
     - task: Docker@2
-      displayName: Build an image
+      displayName: Build and push an image to container registry
       inputs:
-        command: build
+        command: buildAndPush
+        repository: $(imageRepository)
         dockerfile: '$(Build.SourcesDirectory)/StoreAPI/Dockerfile'
+        containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
           $(tag)
+
+          ## Add the below snippet at the end of your pipeline
+    - task: AzureWebAppContainer@1
+      displayName: 'Azure Web App on Container Deploy'
+      inputs:
+        azureSubscription: $(azureSubscription)
+        appName: $(appName)
+        containers: $(containerRegistry)/$(imageRepository):$(tag)
