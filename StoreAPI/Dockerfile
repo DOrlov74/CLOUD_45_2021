@@ -9,7 +9,7 @@ FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 COPY ["StoreAPI.csproj", "StoreAPI/"]
 RUN dotnet restore "StoreAPI/StoreAPI.csproj"
-COPY /StoreAPI/ .
+COPY StoreAPI/ .
 WORKDIR "/src/StoreAPI"
 RUN dotnet build "StoreAPI.csproj" -c Release -o /app/build
 
