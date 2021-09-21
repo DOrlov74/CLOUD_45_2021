@@ -12,7 +12,6 @@ variables:
   azureSubscription: 'Azure2021'
   appName: 'cloud452021app'
   containerRegistry: 'cloud452021acr.azurecr.io'
-  dockerRegistryServiceConnection: 'aee653ab-e667-4438-b221-d85397c73f8c'
   imageRepository: 'cloud452021'
   tag: '$(Build.BuildId)'
 
@@ -31,7 +30,6 @@ stages:
         command: buildAndPush
         repository: $(imageRepository)
         dockerfile: '$(Build.SourcesDirectory)/StoreAPI/Dockerfile'
-        containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
           $(tag)
 
