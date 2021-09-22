@@ -11,8 +11,8 @@ resources:
 variables:
   azureSubscription: 'AzureSP2021'
   appName: 'cloud452021app'
-  containerRegistry: 'cloud452021acr.azurecr.io'
-  dockerRegistryServiceConnection: 'AzureSP2021'
+  containerRegistry: 'cloud452021.azurecr.io'
+  dockerRegistryServiceConnection: 'AzureDockerSP2021'
   imageRepository: 'cloud452021'
   tag: '$(Build.BuildId)'
 
