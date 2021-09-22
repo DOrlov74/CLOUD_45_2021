@@ -32,8 +32,7 @@ stages:
         repository: $(imageRepository)
         dockerfile: '$(Build.SourcesDirectory)/StoreAPI/Dockerfile'
         containerRegistry: $(dockerRegistryServiceConnection)
-        tags: |
-          $(tag)
+        tags: latest
 
           ## Add the below snippet at the end of your pipeline
     - task: AzureWebAppContainer@1
