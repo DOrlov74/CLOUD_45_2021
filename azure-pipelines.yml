@@ -9,9 +9,10 @@ resources:
 - repo: self
 
 variables:
-  azureSubscription: 'Azure2021'
+  azureSubscription: 'AzureSP2021'
   appName: 'cloud452021app'
   containerRegistry: 'cloud452021acr.azurecr.io'
+  dockerRegistryServiceConnection: 'AzureSP2021'
   imageRepository: 'cloud452021'
   tag: '$(Build.BuildId)'
 
@@ -30,6 +31,7 @@ stages:
         command: buildAndPush
         repository: $(imageRepository)
         dockerfile: '$(Build.SourcesDirectory)/StoreAPI/Dockerfile'
+        containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
           $(tag)
 
