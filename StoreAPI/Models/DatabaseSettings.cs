@@ -15,6 +15,7 @@ namespace StoreAPI.Models
     {
         public string StoresCollection { get; set; }
         public string UsersCollection { get; set; }
+        public string RolesCollection { get; set; }
         public string StocksCollection { get; set; }
         public string SalesCollection { get; set; }
         public string SalesDetailsCollection { get; set; }
@@ -36,6 +37,7 @@ namespace StoreAPI.Models
     {
         string StoresCollection { get; set; }
         string UsersCollection { get; set; }
+        string RolesCollection { get; set; }
         string StocksCollection { get; set; }
         string SalesCollection { get; set; }
         string SalesDetailsCollection { get; set; }

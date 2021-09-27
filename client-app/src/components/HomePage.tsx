@@ -14,7 +14,7 @@ export default function HomePage(){
                 <p>Welcome to my Garden shop!
                 Please <Link to='/login'>login</Link> to buy something. </p>
                 :
-                <p>Welcome back, {userCtx.user.username} to my Garden shop!
+                <p><strong>{userCtx.user.UserName}</strong>, welcome back to my Garden shop!
                 Nice to see you again. </p>
                 }
             </Header>

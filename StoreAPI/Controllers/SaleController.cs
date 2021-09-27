@@ -26,7 +26,7 @@ namespace StoreAPI.Controllers
 
         // GET api/<SaleController>/5
         [HttpGet("{id}")]
-        public ActionResult<Sale> Get(int id)
+        public ActionResult<Sale> Get(string id)
         {
             var sale = _storeService.GetSale(id);
             if (sale == null)
@@ -50,7 +50,7 @@ namespace StoreAPI.Controllers
 
         // PUT api/<SaleController>/5
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] Sale saleIn)
+        public IActionResult Update(string id, [FromBody] Sale saleIn)
         {
             var sale = _storeService.GetSale(id);
             if (sale == null)
@@ -63,7 +63,7 @@ namespace StoreAPI.Controllers
 
         // DELETE api/<SaleController>/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(string id)
         {
             var sale = _storeService.GetSale(id);
             if (sale == null)

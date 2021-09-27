@@ -9,14 +9,15 @@ namespace StoreAPI.Models
     public class SalesDetail
     {
         [BsonId]
-        public int SalesDetailId { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string SalesDetailId { get; set; }
 
         [ForeignKey("Sale")]
-        public int SaleId { get; set; }
+        public string SaleId { get; set; }
 
         public int Seq { get; set; }
 
-        public int Product { get; set; }
+        public string Product { get; set; }
 
         public int Quantity { get; set; }
 

@@ -19,12 +19,14 @@ namespace StoreAPI.Controllers
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly TokenService _tokenService;
+        private readonly StoreService _storeService;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, TokenService tokenService)
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, TokenService tokenService, StoreService storeService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
+            _storeService = storeService;
         }
         //public IActionResult Login()
         //{
@@ -52,17 +54,23 @@ namespace StoreAPI.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody]User user)
         {
-            User appUser = await _userManager.FindByEmailAsync(user.Email);
+            User appUser = _storeService.GetUserByEmail(user.Email);
+            //User appUser = await _userManager.FindByEmailAsync(user.Email);
             if (appUser == null)
             {
                 return Unauthorized();
             }
-            Microsoft.AspNetCore.Identity.SignInResult result = await _signInManager.PasswordSignInAsync(appUser, user.Password, false, false);
-            if (result.Succeeded)
+            var result = appUser.UserName == user.UserName && appUser.Password == user.Password;
+            //Microsoft.AspNetCore.Identity.SignInResult result = await _signInManager.PasswordSignInAsync(appUser, user.Password, false, false);
+            //if (result.Succeeded)
+            if(result)
             {
-                appUser.Token = _tokenService.CreateToken(appUser);
-                var updateResult = await _userManager.UpdateAsync(appUser);
-                if (updateResult.Succeeded)
+                var token = _tokenService.CreateToken(appUser);
+                appUser.Token = token;
+                //var updateResult = await _userManager.UpdateAsync(appUser);
+                _storeService.UpdateUser(appUser.Id, appUser);
+                //if (updateResult.Succeeded)
+                if (_storeService.GetUserByEmail(user.Email).Token == token)
                 {
                     return Ok(appUser);
                 }
@@ -71,28 +79,36 @@ namespace StoreAPI.Controllers
         }
 
         [HttpPost("register")]
+        [AllowAnonymous]
         public async Task<ActionResult<User>> Register([FromBody] User user)
         { 
-            if (_userManager.Users.Any(u => u.Email == user.Email))
+            //if (_userManager.Users.Any(u => u.Email == user.Email))
+            if(_storeService.GetUserByEmail(user.Email) != null)
             {
                 return BadRequest("Email is taken");
             }
-            if (_userManager.Users.Any(u => u.UserName == user.UserName))
+            //if (_userManager.Users.Any(u => u.UserName == user.UserName))
+            if (_storeService.GetUserByName(user.UserName) != null)
             {
                 return BadRequest("Name is taken");
             }
             var appUser = new User
             {
                 UserName = user.UserName,
-                Email = user.Email
+                Email = user.Email,
+                Password = user.Password
             };
-            var result = await _userManager.CreateAsync(appUser, user.Password); 
-            if (result.Succeeded)
+            //var result = await _userManager.CreateAsync(appUser, user.Password);
+            _storeService.CreateUser(appUser);
+            //if (result.Succeeded)
+            if(_storeService.GetUserByEmail(user.Email) != null)
             {
                 var token = _tokenService.CreateToken(appUser);
                 appUser.Token = token;
-                result = await _userManager.UpdateAsync(appUser);
-                if (result.Succeeded)
+                //var result = await _userManager.UpdateAsync(appUser);
+                _storeService.UpdateUser(appUser.Id, appUser);
+                //if (result.Succeeded)
+                if(_storeService.GetUserByEmail(user.Email).Token == token)
                 {
                     return appUser;
                 }

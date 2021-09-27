@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -15,7 +16,7 @@ namespace StoreAPI.Models
         }
 
         [BsonId]
-        [StringLength(5)]
+        [BsonRepresentation(BsonType.ObjectId)]
         public string FamilyId { get; set; }
 
         [StringLength(50)]

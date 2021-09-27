@@ -20,11 +20,11 @@ export default function CartProvider({children}: Props){
     const [sales, setSales] = useState<Sale[]|null>(null);
     const [userSales, setUserSales] = useState<Sale[]>([]);
     const newSale={
-        Id: '',
+        SaleId: '',
         SaleDocNum: '',
         Store: '',
         POSNum: '',
-        POSUser: userCtx.user ? userCtx.user.id : '',
+        POSUser: userCtx.user ? userCtx.user.Id : '',
         Paid: false,
         SalesDetails: []
     }
@@ -39,14 +39,15 @@ export default function CartProvider({children}: Props){
           });
         }, []);
     useEffect(()=>{
-        if(userCtx.user!==null){
-            setUserSales(userCtx.user.sales);
+        if(userCtx.user!==null && userCtx.user.Sales !== undefined){
+            setUserSales(userCtx.user.Sales);
         }
     }, [userCtx.user])
     useEffect(()=>{
-        if(userSales!==[] && userSales.some((s)=>s.Paid===false)){
+        if(userSales.length>0 && userSales.some((s)=>s.Paid===false)){
             const unpaidSale = userSales.find((s)=>s.Paid===false);
-            setActiveSale(unpaidSale!==undefined ? unpaidSale : newSale);
+            const activeUserSale = sales?.find(s=>s.SaleId === unpaidSale?.SaleId)
+            setActiveSale(activeUserSale!==undefined ? activeUserSale : newSale);
         } else{
             if(userCtx.user!==null){
                 createSale(newSale);

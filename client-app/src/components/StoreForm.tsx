@@ -60,9 +60,9 @@ export default function StoreForm(){
                 <Grid.Column>
                     <Header as='h2'>New store</Header>
                     <Form onSubmit={handleSubmit}>
-                        <Form.Input required placeholder='Store Name' value={store.StoreName} name='StoreName' onChange={handleInputChange}/>
-                        <Form.Input required placeholder='Store Address' value={store.StoreAddress} name='StoreAddress' onChange={handleInputChange}/>
-                        <Form.Checkbox label='Active' checked={store.Active} name='Active' onChange={toggleActive}/>
+                        <Form.Input required placeholder='Store Name' value={store.StoreName || ''} name='StoreName' onChange={handleInputChange}/>
+                        <Form.Input required placeholder='Store Address' value={store.StoreAddress || ''} name='StoreAddress' onChange={handleInputChange}/>
+                        <Form.Checkbox label='Active' checked={store.Active || false} name='Active' onChange={toggleActive}/>
                         <Button loading={submiting} positive type='submit'>Submit</Button>
                         <Button onClick={closeForm} type='button'>Cancel</Button>
                     </Form>

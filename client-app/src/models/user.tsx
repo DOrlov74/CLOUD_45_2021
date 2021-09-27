@@ -2,28 +2,38 @@ import { Photo } from "./photo";
 import { Sale } from "./sale";
 
 export interface User {
-    id: string;
-    username: string;
-    email: string;
-    phonenumber: string;
-    address: string;
-    city: string;
-    token: string;
-    sales: Sale[];
-    photos: Photo[];
-    roles: Role[]
+    Id: string;
+    UserName: string;
+    Email: string;
+    PhoneNumber: string;
+    Address: string;
+    City: string;
+    Token: string;
+    Sales: Sale[];
+    Photos: Photo[];
+    Roles: string[]
 }
 
 export interface Role {
-    RoleName: string;
+    Id: string;
+    Name: string;
+}
+
+export interface RoleDto {
+    Name: string;
 }
 
 export interface UserDto {
-    username: string;
-    email: string;
-    password: string;
+    UserName: string;
+    Email: string;
+    Password: string;
 }
 
 export interface UserContextType {
     user: User|null;
+    setUser: any;
+    userRoles: Role[];
+    setUserRoles: any;
+    roles: Role[];
+    setRoles: any;
 }

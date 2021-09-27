@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -15,7 +16,8 @@ namespace StoreAPI.Models
         }
 
         [BsonId]
-        public int PaymentTypeId { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string PaymentTypeId { get; set; }
 
         [StringLength(20)]
         public string PaymentTypeName { get; set; }

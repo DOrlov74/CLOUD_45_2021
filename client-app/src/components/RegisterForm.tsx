@@ -3,13 +3,15 @@ import { useHistory } from "react-router";
 import { Button, Form, Grid, Header, Message } from "semantic-ui-react";
 import api from "../app/api";
 import { UserDto } from "../models/user";
+import { UserContext } from "./UserProvider";
 
 export default function RegisterForm(){
+    const userCtx=React.useContext(UserContext);
     const history = useHistory();
     const initialState= {
-        username: '',
-        email: '',
-        password: ''
+        UserName: '',
+        Email: '',
+        Password: ''
     }
     const [user, setUser]=useState(initialState);
     const [submiting, setSubmiting]=useState(false);
@@ -25,8 +27,9 @@ export default function RegisterForm(){
 
     async function register(user: UserDto){
         try {
-        await api.Account.register(user)
-          console.log(user);
+        const appUser = await api.Account.register(user)
+          console.log(appUser);
+          userCtx.setUser(appUser);
           setSubmiting(false);
           history.push('/');
         } catch(err: any){
@@ -47,9 +50,9 @@ export default function RegisterForm(){
             <Grid.Column>
                 <Header as='h2'>Register</Header>
                 <Form onSubmit={handleSubmit} error={error?true:false}>
-                    <Form.Input required placeholder='User Name' value={user.username} name='username' onChange={handleInputChange}/>
-                    <Form.Input required placeholder='Email' value={user.email} name='email' onChange={handleInputChange}/>
-                    <Form.Input required type='password' placeholder='Password' value={user.password} name='password' onChange={handleInputChange}/>
+                    <Form.Input required placeholder='User Name' value={user.UserName || ''} name='UserName' onChange={handleInputChange}/>
+                    <Form.Input required placeholder='Email' value={user.Email || ''} name='Email' onChange={handleInputChange}/>
+                    <Form.Input required type='password' placeholder='Password' value={user.Password || ''} name='Password' onChange={handleInputChange}/>
                     <Button loading={submiting} positive type='submit'>Register</Button>
                     <Button onClick={closeForm} type='button'>Cancel</Button>
                     <Message

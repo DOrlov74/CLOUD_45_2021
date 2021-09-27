@@ -2,7 +2,9 @@ import React, { ChangeEvent, useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router";
 import { Button, Form, Grid, Header } from "semantic-ui-react";
 import api from "../app/api";
+import { Family } from "../models/family";
 import { Product } from "../models/product";
+import FamilySelect from "./FamilySelect";
 
 export default function ProductForm(){
     const history = useHistory();
@@ -19,6 +21,12 @@ export default function ProductForm(){
         Stocks: []
     }
     const [product, setProduct]=useState<Product>(initialState);
+    const defaultFamily = {
+        FamilyId: "",
+        FamilyName: "unknown",
+        Products: []
+    }
+    const [currentFamily, setCurrentFamily]=useState<Family>(defaultFamily);
     const [submiting, setSubmiting]=useState(false);
     useEffect(()=>{
         if(id){
@@ -29,16 +37,21 @@ export default function ProductForm(){
             });
         };
     }, [id])
+    useEffect(()=>{
+        if(product.FamilyId !== currentFamily.FamilyId && currentFamily.FamilyId !== ''){
+            setProduct({...product, FamilyId: currentFamily.FamilyId});
+        }
+    }, [currentFamily])
 
     function handleSubmit(){
         editProduct(product);
     }
     function handleInputChange(event: ChangeEvent<HTMLInputElement>){
         const {name, value}=event.target;
-        setProduct({...product, [name]: value})
+        setProduct({...product, [name]: value});
     }
     function toggleDiscontinued(){
-        setProduct({...product, Discontinued: !product.Discontinued})
+        setProduct({...product, Discontinued: !product.Discontinued});
     }
     function editProduct(product: Product){
         setSubmiting(true);
@@ -61,14 +74,15 @@ export default function ProductForm(){
         <>
             <Grid centered columns={2}>
                 <Grid.Column>
-                    <Header as='h2'>New store</Header>
+                    <Header as='h2'>{id?'Edit':'New'} product</Header>
                     <Form onSubmit={handleSubmit}>
-                        <Form.Input required placeholder='Product Name' value={product.ProductName} name='ProductName' onChange={handleInputChange}/>
-                        <Form.Input placeholder='Barcode' value={product.Barcode} name='Barcode' onChange={handleInputChange}/>
-                        <Form.Input placeholder='Product Price' value={product.UnitPrice} name='UnitPrice' onChange={handleInputChange}/>
-                        <Form.Input placeholder='Unit Measure' value={product.UnitMeasure} name='UnitMeasure' onChange={handleInputChange}/>
-                        <Form.Input placeholder='Quantity per Unit' value={product.QuantityPerUnit} name='QuantityPerUnit' onChange={handleInputChange}/>
-                        <Form.Checkbox label='Discontinued' checked={product.Discontinued} name='Discontinued' onChange={toggleDiscontinued}/>
+                        <Form.Input required placeholder='Product Name' value={product.ProductName || ''} name='ProductName' onChange={handleInputChange}/>
+                        <Form.Input placeholder='Barcode' value={product.Barcode || ''} name='Barcode' onChange={handleInputChange}/>
+                        <Form.Input placeholder='Product Price' value={product.UnitPrice || ''} name='UnitPrice' onChange={handleInputChange}/>
+                        <Form.Input placeholder='Unit Measure' value={product.UnitMeasure || ''} name='UnitMeasure' onChange={handleInputChange}/>
+                        <Form.Input placeholder='Quantity per Unit' value={product.QuantityPerUnit || ''} name='QuantityPerUnit' onChange={handleInputChange}/>
+                        <Form.Checkbox label='Discontinued' checked={product.Discontinued || false} name='Discontinued' onChange={toggleDiscontinued}/>
+                        <FamilySelect setCurrentFamily={setCurrentFamily} currentFamily={currentFamily}/>
                         <Button loading={submiting} positive type='submit'>Submit</Button>
                         <Button onClick={closeForm} type='button'>Cancel</Button>
                     </Form>

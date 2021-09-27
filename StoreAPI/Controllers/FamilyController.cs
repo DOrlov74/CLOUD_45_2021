@@ -44,6 +44,10 @@ namespace StoreAPI.Controllers
             {
                 return BadRequest();
             }
+            if (_storeService.GetFamilies().Any(f=>f.FamilyName == family.FamilyName))
+            {
+                return BadRequest();
+            }
             _storeService.CreateFamily(family);
             return Ok(family);
         }

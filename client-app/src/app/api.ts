@@ -1,16 +1,17 @@
 import axios, { AxiosResponse } from 'axios';
+import { Family } from '../models/family';
 import { Product } from '../models/product';
 import { Sale } from '../models/sale';
 import { SalesDetail } from '../models/salesdetail';
 import { Store } from '../models/store';
-import { User, UserDto } from '../models/user';
+import { Role, RoleDto, User, UserDto } from '../models/user';
 
 const sleep=(delay: number)=>{
     return new Promise((resolve)=>{
         setTimeout(resolve, delay)
     })
 }
-axios.defaults.baseURL='https://localhost:49154/api';
+axios.defaults.baseURL='http://localhost:5000/api';
 // axios.interceptors.response.use(async response=>{
 //     try {
 //         await sleep(1000);
@@ -40,29 +41,43 @@ const Sales={
     list: ()=>requests.getList<Sale[]>('/sale'),
     details: (id: string)=>requests.get<Sale>(`/sale/${id}`),
     create: (sale: Sale)=>requests.post<Sale>('/sale', sale),
-    update: (sale: Sale)=>requests.put<Sale>(`/sale/${sale.Id}`, sale),
+    update: (sale: Sale)=>requests.put<Sale>(`/sale/${sale.SaleId}`, sale),
     delete: (id: string)=>requests.del<Sale>(`/sale/${id}`)
 }
 const SalesDetails={
     list: ()=>requests.getList<SalesDetail[]>('/salesdetail'),
     details: (id: string)=>requests.get<SalesDetail>(`/salesdetail/${id}`),
     create: (salesDetail: SalesDetail)=>requests.post<SalesDetail>('/salesdetail', salesDetail),
-    update: (salesDetail: SalesDetail)=>requests.put<SalesDetail>(`/salesdetail/${salesDetail.Id}`, salesDetail),
+    update: (salesDetail: SalesDetail)=>requests.put<SalesDetail>(`/salesdetail/${salesDetail.SalesDetailId}`, salesDetail),
     delete: (id: string)=>requests.del<SalesDetail>(`/salesdetail/${id}`)
 }
 const Products={
     list: ()=>requests.getList<Product[]>('/product'),
     details: (id: string)=>requests.get<Product>(`/product/${id}`),
-    create: (sale: Product)=>requests.post<Product>('/product', sale),
-    update: (sale: Product)=>requests.put<Product>(`/product/${sale.ProductId}`, sale),
+    create: (product: Product)=>requests.post<Product>('/product', product),
+    update: (product: Product)=>requests.put<Product>(`/product/${product.ProductId}`, product),
     delete: (id: string)=>requests.del<Product>(`/product/${id}`)
+}
+const Families={
+    list: ()=>requests.getList<Family[]>('/family'),
+    details: (id: string)=>requests.get<Family>(`/family/${id}`),
+    create: (family: Family)=>requests.post<Family>('/family', family),
+    update: (family: Family)=>requests.put<Family>(`/family/${family.FamilyId}`, family),
+    delete: (id: string)=>requests.del<Family>(`/family/${id}`)
 }
 const Users={
     list: ()=>requests.getList<User[]>('/user'),
     details: (id: string)=>requests.get<User>(`/user/${id}`),
     create: (user: User)=>requests.post<User>('/user', user),
-    update: (user: User)=>requests.put<User>(`/user/${user.id}`, user),
+    update: (user: User)=>requests.put<User>(`/user/${user.Id}`, user),
     delete: (id: string)=>requests.del<User>(`/user/${id}`)
+}
+const Roles={
+    list: ()=>requests.getList<Role[]>('/user/role'),
+    details: (id: string)=>requests.get<Role>(`/user/role/${id}`),
+    create: (role: RoleDto)=>requests.post<Role>('/user/role', role),
+    addrole: (id: string, role: Role)=>requests.post<User>(`/user/role/${id}`, role),
+    delete: (id: string)=>requests.del<Role>(`/user/role/${id}`)
 }
 const Account={
     current: ()=>requests.get<User>('/account'),
@@ -75,7 +90,9 @@ const api={
     Sales,
     SalesDetails,
     Products,
+    Families,
     Users,
+    Roles,
     Account
 }
 export default api;

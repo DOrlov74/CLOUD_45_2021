@@ -12,19 +12,20 @@ namespace StoreAPI.Models
     public class Payment
     {
         [BsonId]
-        public int PaymentId { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string PaymentId { get; set; }
 
         [StringLength(50)]
         //public string SalesNumDoc { get; set; }
         [ForeignKey("Sale")]
-        public int SaleId { get; set; }
+        public string SaleId { get; set; }
 
         [BsonRepresentation(BsonType.Decimal128)]
         public decimal PaidValue { get; set; }
 
 
         [ForeignKey("PaymentType")]
-        public int PaymentTypeId { get; set; }
+        public string PaymentTypeId { get; set; }
 
         [BsonDateTimeOptions(Kind = DateTimeKind.Local, Representation = BsonType.Document)]
         public DateTime? CreatedDate { get; set; }

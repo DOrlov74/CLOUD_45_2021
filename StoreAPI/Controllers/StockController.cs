@@ -26,7 +26,7 @@ namespace StoreAPI.Controllers
 
         // GET api/<StockController>/5
         [HttpGet("{id}")]
-        public ActionResult<Stock> Get(int id)
+        public ActionResult<Stock> Get(string id)
         {
             var stock = _storeService.GetStock(id);
             if (stock == null)
@@ -50,7 +50,7 @@ namespace StoreAPI.Controllers
 
         // PUT api/<StockController>/5
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] Stock stockIn)
+        public IActionResult Update(string id, [FromBody] Stock stockIn)
         {
             var stock = _storeService.GetStock(id);
             if (stock == null)
@@ -63,7 +63,7 @@ namespace StoreAPI.Controllers
 
         // DELETE api/<StockController>/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(string id)
         {
             var stock = _storeService.GetStock(id);
             if (stock == null)

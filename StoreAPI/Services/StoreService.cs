@@ -13,6 +13,7 @@ namespace StoreAPI.Services
     {
         private readonly IMongoCollection<Store> _stores;
         private readonly IMongoCollection<User> _users;
+        private readonly IMongoCollection<Role> _roles;
         private readonly IMongoCollection<Stock> _stocks;
         private readonly IMongoCollection<Sale> _sales;
         private readonly IMongoCollection<SalesDetail> _salesDetails;
@@ -30,6 +31,7 @@ namespace StoreAPI.Services
 
             _stores = database.GetCollection<Store>(collections.StoresCollection);
             _users = database.GetCollection<User>(collections.UsersCollection);
+            _roles = database.GetCollection<Role>(collections.RolesCollection);
             _stocks = database.GetCollection<Stock>(collections.StocksCollection);
             _sales = database.GetCollection<Sale>(collections.SalesCollection);
             _salesDetails = database.GetCollection<SalesDetail>(collections.SalesDetailsCollection);
@@ -73,6 +75,12 @@ namespace StoreAPI.Services
         public User GetUser(Guid id) =>
             _users.Find(user => user.Id == id).FirstOrDefault();
 
+        public User GetUserByEmail(string email) =>
+            _users.Find(user => user.Email == email).FirstOrDefault();
+
+        public User GetUserByName(string name) =>
+            _users.Find(user => user.UserName == name).FirstOrDefault();
+
         public User CreateUser(User user)
         {
             _users.InsertOne(user);
@@ -92,11 +100,34 @@ namespace StoreAPI.Services
         public void RemoveUser(Guid id) =>
             _users.DeleteOne(user => user.Id == id);
 
+        public List<Role> GetRoles() =>
+            _roles.Find(role => true).ToList();
+
+        public Role GetRoleByName(string name) =>
+            _roles.Find(role => role.Name == name).FirstOrDefault();
+
+        public Role CreateRole(Role role)
+        {
+            _roles.InsertOne(role);
+            return role;
+        }
+
+        public User AddRole(Guid id, Role role)
+        {
+            var userIn = _users.Find(user => user.Id == id).FirstOrDefault();
+            userIn.Roles.Add(role.Id);
+            _users.ReplaceOne(user => user.Id == id, userIn);
+            return userIn;
+        }
+
+        public void RemoveRoleByName(string name) =>
+            _roles.DeleteOne(role => role.Name == name);
+
         //  Stocks collection
         public List<Stock> GetStocks() =>
             _stocks.Find(stock => true).ToList();
 
-        public Stock GetStock(int id) =>
+        public Stock GetStock(string id) =>
             _stocks.Find(stock => stock.StockId == id).FirstOrDefault();
 
         public Stock CreateStock(Stock stock)
@@ -108,7 +139,7 @@ namespace StoreAPI.Services
                 storeIn.Stocks.Add(stock);
                 _stores.ReplaceOne(store => store.Id == storeIn.Id, storeIn);
             }
-            if (stock.ProductId != 0)
+            if (stock.ProductId != "")
             {
                 Product productIn = _products.Find(product => product.ProductId == stock.ProductId).FirstOrDefault();
                 productIn.Stocks.Add(stock);
@@ -117,11 +148,11 @@ namespace StoreAPI.Services
             return stock;
         }
 
-        public void UpdateStock(int id, Stock stockIn)
+        public void UpdateStock(string id, Stock stockIn)
         {
             Stock oldStock = _stocks.Find(stock => stock.StockId == id).FirstOrDefault();
             stockIn.StockId = oldStock.StockId;
-            if ((stockIn.StoreId != oldStock.StoreId && stockIn.StoreId != null) || (stockIn.ProductId != oldStock.ProductId && stockIn.ProductId != 0))
+            if ((stockIn.StoreId != oldStock.StoreId && stockIn.StoreId != "") || (stockIn.ProductId != oldStock.ProductId && stockIn.ProductId != ""))
             {
                 //  Update Store
                 Store oldStore = _stores.Find(store => store.Id == oldStock.StoreId).FirstOrDefault();
@@ -149,7 +180,7 @@ namespace StoreAPI.Services
                 storeIn.Stocks.Remove(storeIn.Stocks.First(stock => stock.StockId == stockIn.StockId));
                 _stores.ReplaceOne(store => store.Id == storeIn.Id, storeIn);
             }
-            if (stockIn.ProductId != 0)
+            if (stockIn.ProductId != "")
             {
                 Product productIn = _products.Find(product => product.ProductId == stockIn.ProductId).FirstOrDefault();
                 productIn.Stocks.Remove(productIn.Stocks.First(stock => stock.StockId == stockIn.StockId));
@@ -158,7 +189,7 @@ namespace StoreAPI.Services
             _stocks.DeleteOne(stock => stock.StockId == stockIn.StockId);
         }
 
-        public void RemoveStock(int id)
+        public void RemoveStock(string id)
         {
             Stock stockIn = _stocks.Find(stock => stock.StockId == id).FirstOrDefault();
             RemoveStock(stockIn);
@@ -168,8 +199,8 @@ namespace StoreAPI.Services
         public List<Sale> GetSales() =>
             _sales.Find(sale => true).ToList();
 
-        public Sale GetSale(int id) =>
-            _sales.Find(sale => sale.SaleId == id).FirstOrDefault();
+        public Sale GetSale(string id) =>
+            _sales.Find(sale => sale.SaleId == "").FirstOrDefault();
 
         public Sale CreateSale(Sale sale)
         {
@@ -180,7 +211,7 @@ namespace StoreAPI.Services
                 userIn.Sales.Add(sale);
                 _users.ReplaceOne(user => user.Id == userIn.Id, userIn);
             }
-            if (sale.POSnum != 0)
+            if (sale.POSnum != "")
             {
                 Pos posIn = _pos.Find(pos => pos.PosId == sale.POSnum).FirstOrDefault();
                 posIn.Sales.Add(sale);
@@ -189,11 +220,11 @@ namespace StoreAPI.Services
             return sale;
         }
 
-        public void UpdateSale(int id, Sale saleIn)
+        public void UpdateSale(string id, Sale saleIn)
         {
             Sale oldSale = _sales.Find(sale => sale.SaleId == id).FirstOrDefault();
             saleIn.SaleId = oldSale.SaleId;
-            if ((saleIn.POSUser != oldSale.POSUser && saleIn.POSUser != Guid.Empty) || (saleIn.POSnum != oldSale.POSnum && saleIn.POSnum != 0))
+            if ((saleIn.POSUser != oldSale.POSUser && saleIn.POSUser != Guid.Empty) || (saleIn.POSnum != oldSale.POSnum && saleIn.POSnum != ""))
             {
                 //  Update User
                 User oldUser = _users.Find(user => user.Id == oldSale.POSUser).FirstOrDefault();
@@ -221,7 +252,7 @@ namespace StoreAPI.Services
                 userIn.Sales.Remove(userIn.Sales.First(sale => sale.POSUser == saleIn.POSUser));
                 _users.ReplaceOne(user => user.Id == userIn.Id, userIn);
             }
-            if (saleIn.POSnum != 0)
+            if (saleIn.POSnum != "")
             {
                 Pos posIn = _pos.Find(pos => pos.PosId == saleIn.POSnum).FirstOrDefault();
                 posIn.Sales.Remove(posIn.Sales.First(sale => sale.SaleId == saleIn.SaleId));
@@ -230,7 +261,7 @@ namespace StoreAPI.Services
             _sales.DeleteOne(sale => sale.SaleId == saleIn.SaleId);
         }
 
-        public void RemoveSale(int id)
+        public void RemoveSale(string id)
         {
             Sale saleIn = _sales.Find(sale => sale.SaleId == id).FirstOrDefault();
             RemoveSale(saleIn);
@@ -240,13 +271,13 @@ namespace StoreAPI.Services
         public List<SalesDetail> GetSalesDetails() =>
             _salesDetails.Find(detail => true).ToList();
 
-        public SalesDetail GetSalesDetail(int id) =>
+        public SalesDetail GetSalesDetail(string id) =>
             _salesDetails.Find(detail => detail.SalesDetailId == id).FirstOrDefault();
 
         public SalesDetail CreateSalesDetail(SalesDetail detail)
         {
             _salesDetails.InsertOne(detail);
-            if (detail.SaleId != 0)
+            if (detail.SaleId != "")
             {
                 Sale saleIn = _sales.Find(sale => sale.SaleId == detail.SaleId).FirstOrDefault();
                 saleIn.SalesDetails.Add(detail);
@@ -255,11 +286,11 @@ namespace StoreAPI.Services
             return detail;
         }
 
-        public void UpdateSalesDetail(int id, SalesDetail detailIn)
+        public void UpdateSalesDetail(string id, SalesDetail detailIn)
         {
             SalesDetail oldDetail = _salesDetails.Find(detail => detail.SalesDetailId == id).FirstOrDefault();
             detailIn.SalesDetailId = oldDetail.SalesDetailId;
-            if (detailIn.SaleId != oldDetail.SaleId && detailIn.SaleId != 0)
+            if (detailIn.SaleId != oldDetail.SaleId && detailIn.SaleId != "")
             {
                 //  Update Sale
                 Sale oldSale = _sales.Find(sale => sale.SaleId == oldDetail.SaleId).FirstOrDefault();
@@ -274,7 +305,7 @@ namespace StoreAPI.Services
 
         public void RemoveSalesDetail(SalesDetail detailIn)
         {
-            if (detailIn.SaleId != 0)
+            if (detailIn.SaleId != "")
             {
                 Sale saleIn = _sales.Find(sale => sale.SaleId == detailIn.SaleId).FirstOrDefault();
                 saleIn.SalesDetails.Remove(saleIn.SalesDetails.First(detail => detail.SalesDetailId == detailIn.SalesDetailId));
@@ -283,7 +314,7 @@ namespace StoreAPI.Services
             _salesDetails.DeleteOne(detail => detail.SalesDetailId == detailIn.SalesDetailId);
         }
 
-        public void RemoveSalesDetail(int id)
+        public void RemoveSalesDetail(string id)
         {
             SalesDetail detailIn = _salesDetails.Find(detail => detail.SalesDetailId == id).FirstOrDefault();
             RemoveSalesDetail(detailIn);
@@ -293,13 +324,13 @@ namespace StoreAPI.Services
         public List<Product> GetProducts() =>
             _products.Find(product => true).ToList();
 
-        public Product GetProduct(int id) =>
+        public Product GetProduct(string id) =>
             _products.Find(product => product.ProductId == id).FirstOrDefault();
 
         public Product CreateProduct(Product product)
         {
             _products.InsertOne(product);
-            if (product.FamilyId != null)
+            if (product.FamilyId != "")
             {
                 Family familyIn = _families.Find(family => family.FamilyId == product.FamilyId).FirstOrDefault();
                 familyIn.Products.Add(product);
@@ -308,16 +339,18 @@ namespace StoreAPI.Services
             return product;
         }
 
-        public void UpdateProduct(int id, Product productIn)
+        public void UpdateProduct(string id, Product productIn)
         {
             Product oldProduct = _products.Find(product => product.ProductId == id).FirstOrDefault();
             productIn.ProductId = oldProduct.ProductId;
-            if (productIn.FamilyId != oldProduct.FamilyId && productIn.FamilyId != null)
+            if (productIn.FamilyId != oldProduct.FamilyId && productIn.FamilyId.Length > 0)
             {
                 //  Update Family
-                Family oldFamily = _families.Find(family => family.FamilyId == oldProduct.FamilyId).FirstOrDefault();
-                oldFamily.Products.Remove(oldFamily.Products.First(family => family.FamilyId == oldFamily.FamilyId));
-                _families.ReplaceOne(family => family.FamilyId == oldFamily.FamilyId, oldFamily);
+                if (oldProduct.FamilyId.Length > 0) { 
+                    Family oldFamily = _families.Find(family => family.FamilyId == oldProduct.FamilyId).FirstOrDefault();
+                    oldFamily.Products.Remove(oldFamily.Products.First(family => family.FamilyId == oldFamily.FamilyId));
+                    _families.ReplaceOne(family => family.FamilyId == oldFamily.FamilyId, oldFamily);
+                }
                 Family familyIn = _families.Find(family => family.FamilyId == productIn.FamilyId).FirstOrDefault();
                 familyIn.Products.Add(productIn);
                 _families.ReplaceOne(family => family.FamilyId == familyIn.FamilyId, familyIn);
@@ -327,7 +360,7 @@ namespace StoreAPI.Services
 
         public void RemoveProduct(Product productIn)
         {
-            if (productIn.FamilyId != null)
+            if (productIn.FamilyId != "")
             {
                 Family familyIn = _families.Find(family => family.FamilyId == productIn.FamilyId).FirstOrDefault();
                 familyIn.Products.Remove(familyIn.Products.First(product => product.ProductId == productIn.ProductId));
@@ -336,7 +369,7 @@ namespace StoreAPI.Services
             _products.DeleteOne(product => product.ProductId == productIn.ProductId);
         }
 
-        public void RemoveProduct(int id)
+        public void RemoveProduct(string id)
         {
             Product productIn = _products.Find(product => product.ProductId == id).FirstOrDefault();
             RemoveProduct(productIn);
@@ -346,13 +379,13 @@ namespace StoreAPI.Services
         public List<Pos> GetPos() =>
             _pos.Find(pos => true).ToList();
 
-        public Pos GetPos(int id) =>
+        public Pos GetPos(string id) =>
             _pos.Find(pos => pos.PosId == id).FirstOrDefault();
 
         public Pos CreatePos(Pos pos)
         {
             _pos.InsertOne(pos);
-            if (pos.StoreId != null)
+            if (pos.StoreId != "")
             {
                 Store storeIn = _stores.Find(store => store.Id == pos.StoreId).FirstOrDefault();
                 storeIn.Pos.Add(pos);
@@ -361,11 +394,11 @@ namespace StoreAPI.Services
             return pos;
         }
 
-        public void UpdatePos(int id, Pos posIn)
+        public void UpdatePos(string id, Pos posIn)
         {
             Pos oldPos = _pos.Find(pos => pos.PosId == id).FirstOrDefault();
             posIn.PosId = oldPos.PosId;
-            if (posIn.StoreId != oldPos.StoreId && posIn.StoreId != null)
+            if (posIn.StoreId != oldPos.StoreId && posIn.StoreId != "")
             {
                 //  Update Store
                 Store oldStore = _stores.Find(store => store.Id == oldPos.StoreId).FirstOrDefault();
@@ -380,7 +413,7 @@ namespace StoreAPI.Services
 
         public void RemovePos(Pos posIn)
         {
-            if (posIn.StoreId != null)
+            if (posIn.StoreId != "")
             {
                 Store storeIn = _stores.Find(store => store.Id == posIn.StoreId).FirstOrDefault();
                 storeIn.Pos.Remove(storeIn.Pos.First(pos => pos.PosId == posIn.PosId));
@@ -389,7 +422,7 @@ namespace StoreAPI.Services
             _pos.DeleteOne(pos => pos.PosId == posIn.PosId);
         }
 
-        public void RemovePos(int id)
+        public void RemovePos(string id)
         {
             Pos posIn = _pos.Find(pos => pos.PosId == id).FirstOrDefault();
             RemovePos(posIn);
@@ -399,19 +432,19 @@ namespace StoreAPI.Services
         public List<Payment> GetPayments() =>
             _payments.Find(payment => true).ToList();
 
-        public Payment GetPayment(int id) =>
+        public Payment GetPayment(string id) =>
             _payments.Find(payment => payment.PaymentId == id).FirstOrDefault();
 
         public Payment CreatePayment(Payment payment)
         {
             _payments.InsertOne(payment);
-            if (payment.SaleId != 0)
+            if (payment.SaleId != "")
             {
                 Sale saleIn = _sales.Find(sale => sale.SaleId == payment.SaleId).FirstOrDefault();
                 saleIn.Payments.Add(payment);
                 _sales.ReplaceOne(sale => sale.SaleId == saleIn.SaleId, saleIn);
             }
-            if (payment.PaymentTypeId != 0)
+            if (payment.PaymentTypeId != "")
             {
                 PaymentType typeIn = _paymentTypes.Find(type => type.PaymentTypeId == payment.PaymentTypeId).FirstOrDefault();
                 typeIn.Payments.Add(payment);
@@ -420,11 +453,11 @@ namespace StoreAPI.Services
             return payment;
         }
 
-        public void UpdatePayment(int id, Payment paymentIn)
+        public void UpdatePayment(string id, Payment paymentIn)
         {
             Payment oldPayment = _payments.Find(payment => payment.PaymentId == id).FirstOrDefault();
             paymentIn.PaymentId = oldPayment.PaymentId;
-            if ((paymentIn.SaleId != oldPayment.SaleId && paymentIn.SaleId != 0) || (paymentIn.PaymentTypeId != oldPayment.PaymentTypeId && paymentIn.PaymentTypeId != 0))
+            if ((paymentIn.SaleId != oldPayment.SaleId && paymentIn.SaleId != "") || (paymentIn.PaymentTypeId != oldPayment.PaymentTypeId && paymentIn.PaymentTypeId != ""))
             {
                 //  Update Sale
                 Sale oldSale = _sales.Find(sale => sale.SaleId == oldPayment.SaleId).FirstOrDefault();
@@ -446,13 +479,13 @@ namespace StoreAPI.Services
 
         public void RemovePayment(Payment paymentIn)
         {
-            if (paymentIn.SaleId != 0)
+            if (paymentIn.SaleId != "")
             {
                 Sale saleIn = _sales.Find(sale => sale.SaleId == paymentIn.SaleId).FirstOrDefault();
                 saleIn.Payments.Remove(saleIn.Payments.First(payment => payment.PaymentId == paymentIn.PaymentId));
                 _sales.ReplaceOne(sale => sale.SaleId == saleIn.SaleId, saleIn);
             }
-            if (paymentIn.PaymentTypeId != 0)
+            if (paymentIn.PaymentTypeId != "")
             {
                 PaymentType typeIn = _paymentTypes.Find(type => type.PaymentTypeId == paymentIn.PaymentTypeId).FirstOrDefault();
                 typeIn.Payments.Remove(typeIn.Payments.First(payment => payment.PaymentId == paymentIn.PaymentId));
@@ -461,7 +494,7 @@ namespace StoreAPI.Services
             _payments.DeleteOne(payment => payment.PaymentId == paymentIn.PaymentId);
         }
 
-        public void RemovePayment(int id)
+        public void RemovePayment(string id)
         {
             Payment paymentIn = _payments.Find(payment => payment.PaymentId == id).FirstOrDefault();
             RemovePayment(paymentIn);
@@ -471,7 +504,7 @@ namespace StoreAPI.Services
         public List<PaymentType> GetPaymentTypes() =>
             _paymentTypes.Find(paymentType => true).ToList();
 
-        public PaymentType GetPaymentType(int id) =>
+        public PaymentType GetPaymentType(string id) =>
             _paymentTypes.Find(paymentType => paymentType.PaymentTypeId == id).FirstOrDefault();
 
         public PaymentType CreatePaymentType(PaymentType paymentType)
@@ -480,7 +513,7 @@ namespace StoreAPI.Services
             return paymentType;
         }
 
-        public void UpdatePaymentType(int id, PaymentType paymentTypeIn)
+        public void UpdatePaymentType(string id, PaymentType paymentTypeIn)
         {
             var oldPaymentType = _paymentTypes.Find(paymentType => paymentType.PaymentTypeId == id).FirstOrDefault();
             paymentTypeIn.PaymentTypeId = oldPaymentType.PaymentTypeId;
@@ -490,7 +523,7 @@ namespace StoreAPI.Services
         public void RemovePaymentType(PaymentType paymentTypeIn) =>
             _paymentTypes.DeleteOne(paymentType => paymentType.PaymentTypeId == paymentTypeIn.PaymentTypeId);
 
-        public void RemovePaymentType(int id) =>
+        public void RemovePaymentType(string id) =>
             _paymentTypes.DeleteOne(paymentType => paymentType.PaymentTypeId == id);
 
         //  Families collection

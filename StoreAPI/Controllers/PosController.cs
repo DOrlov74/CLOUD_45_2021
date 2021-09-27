@@ -26,7 +26,7 @@ namespace StoreAPI.Controllers
 
         // GET api/<PosController>/5
         [HttpGet("{id}")]
-        public ActionResult<Pos> Get(int id)
+        public ActionResult<Pos> Get(string id)
         {
             var pos = _storeService.GetPos(id);
             if (pos == null)
@@ -50,7 +50,7 @@ namespace StoreAPI.Controllers
 
         // PUT api/<PosController>/5
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] Pos posIn)
+        public IActionResult Update(string id, [FromBody] Pos posIn)
         {
             var pos = _storeService.GetPos(id);
             if (pos == null)
@@ -63,7 +63,7 @@ namespace StoreAPI.Controllers
 
         // DELETE api/<PosController>/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(string id)
         {
             var pos = _storeService.GetPos(id);
             if (pos == null)

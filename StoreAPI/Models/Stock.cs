@@ -12,10 +12,11 @@ namespace StoreAPI.Models
     public class Stock
     {
         [BsonId]
-        public int StockId { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string StockId { get; set; }
 
         [ForeignKey("Product")]
-        public int ProductId { get; set; }
+        public string ProductId { get; set; }
 
         [StringLength(5)]
         [ForeignKey("Store")]

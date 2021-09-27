@@ -1,7 +1,7 @@
 import { SalesDetail } from "./salesdetail";
 
 export interface Sale {
-    Id: string;
+    SaleId: string;
     SaleDocNum: string;
     Store: string;
     POSNum: string;

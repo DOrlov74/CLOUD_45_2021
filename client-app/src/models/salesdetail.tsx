@@ -1,7 +1,7 @@
 export interface SalesDetail {
-    Id: string;
+    SalesDetailId: string;
     SaleID: string;
-    Seq: string;
+    Seq: number;
     Product: string;
     Quantity: number;
     UnitPrice: number|null;

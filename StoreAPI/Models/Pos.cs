@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -16,7 +17,8 @@ namespace StoreAPI.Models
         }
 
         [BsonId]
-        public int PosId { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string PosId { get; set; }
 
         [BsonRequired]
         [StringLength(5)]

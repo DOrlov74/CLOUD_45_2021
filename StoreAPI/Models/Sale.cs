@@ -18,7 +18,8 @@ namespace StoreAPI.Models
         }
 
         [BsonId]
-        public int SaleId { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string SaleId { get; set; }
 
         [StringLength(20)]
         public string SaleDocNum { get; set; }
@@ -27,7 +28,7 @@ namespace StoreAPI.Models
         public string Store { get; set; }
 
         [ForeignKey("POS")]
-        public int POSnum { get; set; }
+        public string POSnum { get; set; }
 
         [ForeignKey("User")]
         public Guid POSUser { get; set; }

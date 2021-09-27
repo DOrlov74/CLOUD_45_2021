@@ -4,13 +4,15 @@ import { useHistory } from "react-router";
 import { Button, Form, Grid, Header, Message } from "semantic-ui-react";
 import api from "../app/api";
 import { UserDto } from "../models/user";
+import { UserContext } from "./UserProvider";
 
 export default function LoginForm(){
+    const userCtx=React.useContext(UserContext);
     const history = useHistory();
     const initialState= {
-        username: '',
-        email: '',
-        password: ''
+        UserName: '',
+        Email: '',
+        Password: ''
     }
     const [user, setUser]=useState(initialState);
     const [submiting, setSubmiting]=useState(false);
@@ -25,16 +27,17 @@ export default function LoginForm(){
     }
 
     async function login(user: UserDto){
-        // try{
-        // await api.Account.login(user);
-        //   console.log(user);
-        //   setSubmiting(false);
-        //   history.push('/');
-        // } catch(err: any){
-        //     console.log(err);
-        //     setError(err);
-        //     setSubmiting(false);
-        // };
+        try{
+        const appUser = await api.Account.login(user);
+          console.log(appUser);
+          userCtx.setUser(appUser);
+          setSubmiting(false);
+          history.push('/');
+        } catch(err: any){
+            console.log(err);
+            setError(err);
+            setSubmiting(false);
+        };
         // try {
         //     const response = await axios.post('https://localhost:49154/api/login', user);
         //     console.log(response);
@@ -45,29 +48,29 @@ export default function LoginForm(){
         //     setError(err);
         //     setSubmiting(false);
         // }
-        async function myFetch() {
-            let response = await fetch('https://localhost:49154/api/login', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json;charset=utf-8'
-                },
-                body: JSON.stringify(user)
-            });
-            if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
-            } else {
-              return await response.json();
-            }
-        }
-        myFetch().then((result) => {
-            console.log(result);
-            setSubmiting(false);
-            history.push('/');
-        }).catch(e => {
-            console.log(e);
-            setError(e);
-            setSubmiting(false);
-        });  
+    //     async function myFetch() {
+    //         let response = await fetch('https://localhost:49154/api/login', {
+    //             method: 'POST',
+    //             headers: {
+    //               'Content-Type': 'application/json;charset=utf-8'
+    //             },
+    //             body: JSON.stringify(user)
+    //         });
+    //         if (!response.ok) {
+    //           throw new Error(`HTTP error! status: ${response.status}`);
+    //         } else {
+    //           return await response.json();
+    //         }
+    //     }
+    //     myFetch().then((result) => {
+    //         console.log(result);
+    //         setSubmiting(false);
+    //         history.push('/');
+    //     }).catch(e => {
+    //         console.log(e);
+    //         setError(e);
+    //         setSubmiting(false);
+    //     });  
     }
 
     function closeForm(){
@@ -80,9 +83,9 @@ export default function LoginForm(){
             <Grid.Column>
                 <Header as='h2'>Login</Header>
                 <Form onSubmit={handleSubmit} error={error?true:false}>
-                    <Form.Input required placeholder='User Name' value={user.username} name='username' onChange={handleInputChange}/>
-                    <Form.Input required placeholder='Email' value={user.email} name='email' onChange={handleInputChange}/>
-                    <Form.Input required type='password' placeholder='Password' value={user.password} name='password' onChange={handleInputChange}/>
+                    <Form.Input required placeholder='User Name' value={user.UserName || ''} name='UserName' onChange={handleInputChange}/>
+                    <Form.Input required placeholder='Email' value={user.Email || ''} name='Email' onChange={handleInputChange}/>
+                    <Form.Input required type='password' placeholder='Password' value={user.Password || ''} name='Password' onChange={handleInputChange}/>
                     <Button loading={submiting} positive type='submit'>Login</Button>
                     <Button onClick={closeForm} type='button'>Cancel</Button>
                     <Message

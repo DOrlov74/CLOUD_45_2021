@@ -11,7 +11,6 @@ namespace StoreAPI.Models
     [CollectionName("Roles")]
     public class Role:MongoIdentityRole<Guid>
     {
-        [Required]
         public string RoleName { get; set; }
     }
 }

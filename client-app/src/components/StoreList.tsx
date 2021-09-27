@@ -1,10 +1,12 @@
 import React, { SyntheticEvent, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { Button, Card, Header, Image } from "semantic-ui-react";
+import { Link, NavLink } from "react-router-dom";
+import { Button, Card, Divider, Header, Icon, Image } from "semantic-ui-react";
 import api from "../app/api";
 import { Store } from "../models/store";
+import { UserContext } from "./UserProvider";
 
 export default function StoreList() {
+    const userCtx=React.useContext(UserContext);
     const [target, setTarget] = useState('');
     const [stores, setStores]=useState<Store[]>([]);
     const [selectedStore, setSelectedStore]=useState<Store|undefined>(undefined);
@@ -26,7 +28,7 @@ export default function StoreList() {
       
     return(
         <>
-            <Header as='h1'>The stores</Header>
+            <Header as='h1'>Our stores</Header>
             <Card.Group>
                 {stores.map(store => (
                     <Card key={store.Id}>
@@ -44,13 +46,13 @@ export default function StoreList() {
                     </Card.Content>
                     <Card.Content extra>
                         <div className='ui three buttons'>
-                        <Button basic color='yellow'>
+                        <Button color='yellow'>
                             View Stock
                         </Button>
-                        <Button as={Link} to={`/editstore/${store.Id}`} basic color='green'>
+                        <Button as={Link} to={`/editstore/${store.Id}`} color='green'>
                             Edit
                         </Button>
-                        <Button name={store.Id} loading={submiting && target === store.Id} onClick={(e)=>handleDeleteStore(e,store.Id)} basic color='red'>
+                        <Button name={store.Id} loading={submiting && target === store.Id} onClick={(e)=>handleDeleteStore(e,store.Id)} color='orange'>
                             Delete
                         </Button>
                         </div>
@@ -58,5 +60,18 @@ export default function StoreList() {
                     </Card>
                 ))}
             </Card.Group>
+            {userCtx.userRoles.some((r)=>r.Name === "admin")?
+            <>
+            <Divider horizontal>
+                <Header as='h4'>
+                    <Icon name='edit outline' />
+                    New Store
+                </Header>
+            </Divider>
+            <Card.Group centered>
+                <Button as={NavLink} to='/newstore' positive content='Create Store'/>
+            </Card.Group>
+            </>:<></>
+            }
         </>
 )}

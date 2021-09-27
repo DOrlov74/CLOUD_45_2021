@@ -34,9 +34,10 @@ namespace StoreAPI.Controllers
 
         [HttpGet("{id}", Name = "GetUser")]
         //[Authorize(Roles = "Admin")]
-        public ActionResult<User> Get(Guid id)
+        public ActionResult<User> Get(string id)
         {
-            var user = _storeService.GetUser(id);
+            Guid gId = Guid.Parse(id);
+            var user = _storeService.GetUser(gId);
             if (user == null)
             {
                 return NotFound();
@@ -44,8 +45,14 @@ namespace StoreAPI.Controllers
             return Ok(user);
         }
 
+        [HttpGet("role")]
+        public ActionResult<List<Role>> GetRoles()
+        {
+            return _storeService.GetRoles();
+        }
+
         [HttpGet("role/{id}", Name = "GetRole")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<ActionResult<Role>> GetRoleAsync(string id)
         {
             var role = await _roleManager.FindByIdAsync(id);
@@ -80,12 +87,12 @@ namespace StoreAPI.Controllers
         }
 
         [HttpPost("role")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateRole([FromBody] Role role)
         {
             if (ModelState.IsValid)
             {
-                IdentityResult result = await _roleManager.CreateAsync(new Role() { Name = role.RoleName });
+                IdentityResult result = await _roleManager.CreateAsync(new Role() { Name = role.Name });
                 if (result.Succeeded)
                 {
                     return Ok(role);
@@ -94,22 +101,49 @@ namespace StoreAPI.Controllers
             return BadRequest();
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Update(Guid id, [FromBody] User userIn)
+        [HttpPost("role/{id}")]
+        //[Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AddRole(string id, [FromBody] Role role)
         {
-            var user = _storeService.GetUser(id);
+            if (ModelState.IsValid)
+            {
+                Guid gId = Guid.Parse(id);
+                var user = _storeService.GetUser(gId);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                if (user.Roles.Find(r => r == role.Id) != Guid.Empty)
+                {
+                    return BadRequest();
+                }
+                user = _storeService.AddRole(user.Id, role );
+                if (user.Roles.Find(r => r == role.Id) != Guid.Empty)
+                {
+                    return Ok(user);
+                }
+            }
+            return BadRequest();
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult Update(string id, [FromBody] User userIn)
+        {
+            Guid gId = Guid.Parse(id);
+            var user = _storeService.GetUser(gId);
             if (user == null)
             {
                 return NotFound();
             }
-            _storeService.UpdateUser(id, userIn);
+            _storeService.UpdateUser(gId, userIn);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        public IActionResult Delete(string id)
         {
-            var user = _storeService.GetUser(id);
+            Guid gId = Guid.Parse(id);
+            var user = _storeService.GetUser(gId);
             if (user == null)
             {
                 return NotFound();

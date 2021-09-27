@@ -26,7 +26,7 @@ namespace StoreAPI.Controllers
 
         // GET api/<PaymentTypeController>/5
         [HttpGet("{id}")]
-        public ActionResult<PaymentType> Get(int id)
+        public ActionResult<PaymentType> Get(string id)
         {
             var paymentType = _storeService.GetPaymentType(id);
             if (paymentType == null)
@@ -50,7 +50,7 @@ namespace StoreAPI.Controllers
 
         // PUT api/<PaymentTypeController>/5
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] PaymentType paymentTypeIn)
+        public IActionResult Update(string id, [FromBody] PaymentType paymentTypeIn)
         {
             var paymentType = _storeService.GetPaymentType(id);
             if (paymentType == null)
@@ -63,7 +63,7 @@ namespace StoreAPI.Controllers
 
         // DELETE api/<PaymentTypeController>/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(string id)
         {
             var paymentType = _storeService.GetPaymentType(id);
             if (paymentType == null)

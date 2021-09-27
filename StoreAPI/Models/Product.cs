@@ -17,7 +17,8 @@ namespace StoreAPI.Models
         }
 
         [BsonId]
-        public int ProductId { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string ProductId { get; set; }
 
         [StringLength(12)]
         public string Barcode { get; set; }
@@ -27,7 +28,6 @@ namespace StoreAPI.Models
         public string ProductName { get; set; }
 
         [BsonRequired]
-        [StringLength(5)]
         [ForeignKey("Family")]
         public string FamilyId { get; set; }
 
