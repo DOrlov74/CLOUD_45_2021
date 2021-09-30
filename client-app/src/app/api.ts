@@ -11,7 +11,13 @@ const sleep=(delay: number)=>{
         setTimeout(resolve, delay)
     })
 }
+
 axios.defaults.baseURL='http://localhost:5000/api';
+axios.interceptors.request.use(config => {
+    const token = window.localStorage.getItem('jwt');
+    if(token) config.headers.Authorization = `Bearer ${token}`;
+    return config;
+})
 // axios.interceptors.response.use(async response=>{
 //     try {
 //         await sleep(1000);
@@ -66,7 +72,8 @@ const Families={
     delete: (id: string)=>requests.del<Family>(`/family/${id}`)
 }
 const Users={
-    list: ()=>requests.getList<User[]>('/user'),
+    //list: ()=>requests.getList<User[]>('/user'),
+    current: ()=>requests.get<User>('/user'),
     details: (id: string)=>requests.get<User>(`/user/${id}`),
     create: (user: User)=>requests.post<User>('/user', user),
     update: (user: User)=>requests.put<User>(`/user/${user.Id}`, user),

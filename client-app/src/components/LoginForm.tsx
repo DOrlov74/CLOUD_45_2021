@@ -31,6 +31,7 @@ export default function LoginForm(){
         const appUser = await api.Account.login(user);
           console.log(appUser);
           userCtx.setUser(appUser);
+          userCtx.setToken(appUser?.Token);
           setSubmiting(false);
           history.push('/');
         } catch(err: any){
@@ -38,6 +39,7 @@ export default function LoginForm(){
             setError(err);
             setSubmiting(false);
         };
+        // It should work, but it doesn't :((
         // try {
         //     const response = await axios.post('https://localhost:49154/api/login', user);
         //     console.log(response);
@@ -48,6 +50,7 @@ export default function LoginForm(){
         //     setError(err);
         //     setSubmiting(false);
         // }
+        // It's just a test:
     //     async function myFetch() {
     //         let response = await fetch('https://localhost:49154/api/login', {
     //             method: 'POST',

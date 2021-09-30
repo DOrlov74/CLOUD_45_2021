@@ -36,4 +36,7 @@ export interface UserContextType {
     setUserRoles: any;
     roles: Role[];
     setRoles: any;
+    userToken: string|null;
+    setToken: any;
+    getCurrentUser: any
 }

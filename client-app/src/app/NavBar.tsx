@@ -1,6 +1,7 @@
 import React, {MouseEvent, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { Button, Container, Header, Icon, Menu } from "semantic-ui-react";
+import { CartContext } from "../components/CartProvider";
 import { UserContext } from "../components/UserProvider";
 
 interface Props{
@@ -9,6 +10,7 @@ interface Props{
 
 export default function NavBar({logout}: Props){
     const userCtx=React.useContext(UserContext);
+    const cartCtx=React.useContext(CartContext);
     const [activeItem, setActiveItem] = useState<string>('home');
 
     function handleClick(event: MouseEvent){
@@ -25,12 +27,14 @@ export default function NavBar({logout}: Props){
                     {/* <img src="/assets/logo.png" alt="logo" style={{marginRight:"10px"}}/> */}
                     <Header as='h3' color='orange'>Garden Shop</Header>
                 </Menu.Item>
+                {userCtx.userRoles.some((r)=>r.Name === "admin")?
                 <Menu.Item as={NavLink} to='/store' name='stores' 
-                    active={activeItem === 'stores'} onClick={handleClick}/>
+                    active={activeItem === 'stores'} onClick={handleClick}/>:
+                <></>}
                 <Menu.Item as={NavLink} to='/product' name='products' 
                     active={activeItem === 'products'} onClick={handleClick}/>
                 <Menu.Menu position='right'>
-                    <Menu.Item>
+                    <Menu.Item as={NavLink} to={`/cartlist/${cartCtx.activeSale?.SaleId}`} name='cartlist' onClick={handleClick}>
                         <Icon disabled={userCtx.user === null} name='cart' size='large' onClick={handleClick}/>
                     </Menu.Item>
                     {(userCtx.user !== null)?

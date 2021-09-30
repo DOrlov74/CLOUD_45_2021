@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using StoreAPI.Models;
 using StoreAPI.Services;
 using System;
@@ -29,7 +30,15 @@ namespace StoreAPI.Controllers
         //[Authorize(Roles = "Admin")]
         public ActionResult<List<User>> Get()
         {
-            return _storeService.GetUsers();
+            //return _storeService.GetUsers();
+            var header = Request.Headers[HeaderNames.Authorization].ToString();
+            string[] accessToken = header.Split(' ');
+            var user = _storeService.GetUserByToken(accessToken[1]);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(user);
         }
 
         [HttpGet("{id}", Name = "GetUser")]

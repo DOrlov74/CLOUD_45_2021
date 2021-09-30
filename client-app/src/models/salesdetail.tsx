@@ -4,6 +4,6 @@ export interface SalesDetail {
     Seq: number;
     Product: string;
     Quantity: number;
-    UnitPrice: number|null;
+    UnitPrice: number;
     LineTotal: number;
 }

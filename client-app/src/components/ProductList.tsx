@@ -1,8 +1,7 @@
-import React, { SyntheticEvent, useEffect, useState } from "react";
+import React, { SyntheticEvent, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { Button, Card, Divider, Grid, Header, Icon, Image, Label } from "semantic-ui-react";
+import { Button, Card, Divider, Grid, Header, Icon, Label } from "semantic-ui-react";
 import api from "../app/api";
-import { Family } from "../models/family";
 import { Product } from "../models/product";
 import { SalesDetail } from "../models/salesdetail";
 import { CartContext } from "./CartProvider";
@@ -12,8 +11,6 @@ export default function ProductList() {
     const userCtx=React.useContext(UserContext);
     const cartCtx=React.useContext(CartContext);
     const [target, setTarget] = useState('');
-    const [products, setProducts]=useState<Product[]>([]);
-    const [families, setFamilies]=useState<Family[]>([]);
     const [selectedProduct, setSelectedProduct]=useState<Product|undefined>(undefined);
     const [submiting, setSubmiting]=useState(false);
     const newSalesDetail={
@@ -22,27 +19,15 @@ export default function ProductList() {
         Seq: 0,
         Product: '',
         Quantity: 0,
-        UnitPrice: null,
+        UnitPrice: 0,
         LineTotal: 0,
     }
-    const [activeSalesDetail, setActiveSalesDetail]=useState<SalesDetail>(newSalesDetail);
-    useEffect(() => {
-        api.Products.list().then(response => {
-          console.log(response);
-          setProducts(response);
-        });
-      }, [])
-    useEffect(() => {
-        api.Families.list().then(response => {
-          console.log(response);
-          setFamilies(response);
-        });
-      }, [])
+
     function handleDeleteProduct(e: SyntheticEvent<HTMLButtonElement>, id:string){
         setTarget(e.currentTarget.name);
         setSubmiting(true);
         api.Products.delete(id).then(()=>{
-        setProducts([...products.filter(s=>s.ProductId !== id)]);
+        cartCtx.setProducts([...cartCtx.products.filter(s=>s.ProductId !== id)]);
         setSubmiting(false);
         });
     }
@@ -50,31 +35,30 @@ export default function ProductList() {
         setTarget(e.currentTarget.name);
         setSubmiting(true);
         setSelectedProduct(product);
-        const activeSale = cartCtx.activeSale;
-        console.log('Active Sell: '+activeSale?.SaleId);
-        let salesDetail = activeSalesDetail;
-        if(activeSale?.SalesDetails!==[] 
-            && activeSale?.SalesDetails.some(d=>d.Product === product.ProductId)){
-            const tempSalesDetail = activeSale.SalesDetails.find(d=>d.Product === product.ProductId);
-            if(tempSalesDetail!==undefined && salesDetail.UnitPrice!==null){
-                salesDetail = tempSalesDetail;
-                salesDetail.Quantity+=1;
-                salesDetail.LineTotal+=salesDetail.UnitPrice ? salesDetail.UnitPrice : 0;
-                updateSalesDetail(salesDetail);
+        const activeSalesDetails = cartCtx.activeSalesDetails;
+        if(activeSalesDetails !==[] 
+            && activeSalesDetails.some(d=>d.Product === product.ProductId)){
+            const tempSalesDetail = activeSalesDetails.find(d=>d.Product === product.ProductId);
+            if(tempSalesDetail!==undefined && tempSalesDetail.UnitPrice!==null){
+                tempSalesDetail.Quantity+=1;
+                tempSalesDetail.LineTotal+=tempSalesDetail.UnitPrice ? tempSalesDetail.UnitPrice : 0;
+                updateSalesDetail(tempSalesDetail);
+                cartCtx.setActiveSalesDetails([...activeSalesDetails.filter(d => d.SalesDetailId !== tempSalesDetail.SalesDetailId), tempSalesDetail]);
             }
-        } else {  
-            salesDetail.SaleID = (activeSale !== null ? activeSale.SaleId : '');
-            salesDetail.Product = product.ProductId;
-            salesDetail.UnitPrice = product.UnitPrice;
-            salesDetail.Quantity = 1;
-            salesDetail.LineTotal = product.UnitPrice ? product.UnitPrice : 0;
+        } else { 
+            const tempSalesDetail = newSalesDetail; 
+            tempSalesDetail.SaleID = (cartCtx.activeSale !== null ? cartCtx.activeSale.SaleId : '');
+            tempSalesDetail.Product = product.ProductId;
+            tempSalesDetail.UnitPrice = product.UnitPrice ? product.UnitPrice : 0;
+            tempSalesDetail.Quantity = 1;
+            tempSalesDetail.LineTotal = product.UnitPrice ? product.UnitPrice : 0;
+            addSalesDetail(tempSalesDetail);
         }
-        addSalesDetail(salesDetail);
         setSubmiting(false);
     }
     function addSalesDetail(salesDetail: SalesDetail){
         api.SalesDetails.create(salesDetail).then(response => {
-            if(response!==null) setActiveSalesDetail(response);
+            if(response!==null) cartCtx.setActiveSalesDetails([...cartCtx.activeSalesDetails, response]);
         }).catch((err)=>{
             console.log(err);
         });
@@ -88,7 +72,7 @@ export default function ProductList() {
         <>
             <Header as='h1'>Our products</Header>
             <Card.Group>
-                {products.map(product => (
+                {cartCtx.products.map(product => (
                     <Card key={product.ProductId}>
                     <Card.Content>
                         {/* <Image
@@ -105,11 +89,11 @@ export default function ProductList() {
                         <p>The product is <strong>{product.Discontinued ? "discontinued" : "available" }</strong></p>
                             <Grid>
                                 <Grid.Column floated='left' width={8}>
-                                    <Label>{families.find(f=>f.FamilyId === product.FamilyId)?.FamilyName}</Label>
+                                    <Label>{cartCtx.families.find(f=>f.FamilyId === product.FamilyId)?.FamilyName}</Label>
                                 </Grid.Column>
                                 <Grid.Column floated='right' width={7}>
-                                    {cartCtx.activeSale?.SalesDetails.some(d=>d.Product === product.ProductId)?
-                                    <Label color='orange'>In cart: {cartCtx.activeSale.SalesDetails.find(d=>d.Product === product.ProductId)?.Quantity} {product.UnitMeasure}</Label>
+                                    {cartCtx.activeSalesDetails.some(d=>d.Product === product.ProductId)?
+                                    <Label color='orange'>In cart: {cartCtx.activeSalesDetails.find(d=>d.Product === product.ProductId)?.Quantity} {product.UnitMeasure}</Label>
                                     :<></>
                                     }
                                 </Grid.Column>

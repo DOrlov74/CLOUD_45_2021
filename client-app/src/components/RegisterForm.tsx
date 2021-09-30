@@ -30,6 +30,7 @@ export default function RegisterForm(){
         const appUser = await api.Account.register(user)
           console.log(appUser);
           userCtx.setUser(appUser);
+          userCtx.setToken(appUser?.Token);
           setSubmiting(false);
           history.push('/');
         } catch(err: any){

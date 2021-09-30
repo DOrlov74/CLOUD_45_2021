@@ -1,4 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
+import { setTokenSourceMapRange } from "typescript";
 import api from "../app/api";
 import { Role, User, UserContextType } from "../models/user";
 
@@ -8,7 +9,10 @@ const userContextDefault: UserContextType = {
     userRoles: [],
     setUserRoles: null,
     roles: [],
-    setRoles: null
+    setRoles: null,
+    userToken: null,
+    setToken: null,
+    getCurrentUser: null
 }
 
 export const UserContext=createContext<UserContextType>(userContextDefault);
@@ -21,6 +25,7 @@ export default function UserProvider({children}: Props){
     const [user, setUser] = useState<User|null>(null);
     const [roles, setRoles]=useState<Role[]>([]);
     const [userRoles, setUserRoles] = useState<Role[]>([]);
+    const [userToken, setUserToken] = useState<string|null>(window.localStorage.getItem('jwt'))
     useEffect(()=>{
         api.Roles.list().then(response => {
             if(response!==null) setRoles(response);
@@ -37,6 +42,7 @@ export default function UserProvider({children}: Props){
             }
         });
     }, [user, roles])
+    // It's just a test:
     // useEffect(() => {
         //  fetch('https://localhost:49153/api/account',
         // {method: 'GET',
@@ -58,19 +64,40 @@ export default function UserProvider({children}: Props){
     //     getCurrentUser();
     //   }, [user])
 
-    async function getCurrentUser(){
-        await api.Account.current()
-        .then(response => {
-            console.log(response);
-            setUser(response);
-        })
-        .catch((err)=>{
-            console.log(err);
-        });
+    // async function getCurrentUser(){
+    //     await api.Account.current()
+    //     .then(response => {
+    //         console.log(response);
+    //         setUser(response);
+    //     })
+    //     .catch((err)=>{
+    //         console.log(err);
+    //     });
+    // }
+
+    function getCurrentUser(){
+        if(userToken !== null){
+            console.log('Trying to get user ...');    
+            api.Users.current()
+                .then(response => {
+                    console.log(response);
+                    setUser(response);
+                })
+                .catch((err)=>{
+                    console.log(err);
+                });
+            }
+        }
+
+    function setToken(token: string){
+        if(token) {
+            window.localStorage.setItem('jwt', token);
+            setUserToken(token);
+        }
     }
 
     return(
-        <UserContext.Provider value={{user, setUser, userRoles, setUserRoles, roles, setRoles}}>
+        <UserContext.Provider value={{user, setUser, userRoles, setUserRoles, roles, setRoles, userToken, setToken, getCurrentUser}}>
             {children}
         </UserContext.Provider>
     );

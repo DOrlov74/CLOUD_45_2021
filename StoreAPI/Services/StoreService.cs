@@ -81,6 +81,9 @@ namespace StoreAPI.Services
         public User GetUserByName(string name) =>
             _users.Find(user => user.UserName == name).FirstOrDefault();
 
+        public User GetUserByToken(string token) =>
+            _users.Find(user => user.Token == token).FirstOrDefault();
+
         public User CreateUser(User user)
         {
             _users.InsertOne(user);
