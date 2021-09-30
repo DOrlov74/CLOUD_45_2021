@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useState } from "react";
+import React, { SyntheticEvent, useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { Button, Card, Divider, Grid, Header, Icon, Label } from "semantic-ui-react";
 import api from "../app/api";
@@ -22,6 +22,15 @@ export default function ProductList() {
         UnitPrice: 0,
         LineTotal: 0,
     }
+
+    useEffect(()=>{
+        if(userCtx.user) {
+            cartCtx.fillUserSales();
+            cartCtx.fillCartProducts();
+            cartCtx.fillUserSalesDetails();
+            cartCtx.fillActiveSalesDetails();
+          }
+    }, [])
 
     function handleDeleteProduct(e: SyntheticEvent<HTMLButtonElement>, id:string){
         setTarget(e.currentTarget.name);

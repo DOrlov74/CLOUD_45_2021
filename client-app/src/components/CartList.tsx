@@ -10,6 +10,12 @@ export default function CartList(){
     const [totalProducts, setTotalProducts]=useState<number>(0);
     const [totalPrice, setTotalPrice]=useState<number>(0);
     useEffect(()=>{
+            cartCtx.fillUserSales();
+            cartCtx.fillCartProducts();
+            cartCtx.fillUserSalesDetails();
+            cartCtx.fillActiveSalesDetails();
+    }, [])
+    useEffect(()=>{
         let price = 0;
         cartCtx.activeSalesDetails.map(d=>{
             price += d.LineTotal;
