@@ -25,7 +25,13 @@ namespace StoreAPI
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            Configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json")
+            .AddJsonFile($"myAppsettings.json", 
+                    optional: true,
+                    reloadOnChange: true)
+            .AddEnvironmentVariables()
+            .Build();
         }
 
         public IConfiguration Configuration { get; }
