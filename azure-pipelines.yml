@@ -15,6 +15,8 @@ variables:
   dockerRegistryServiceConnection: 'AzureDockerSP2021'
   imageRepository: 'cloud452021'
   tag: '$(Build.BuildId)'
+  databaseName: 'CLOUD_45_2021'
+  connectionString: 'mongodb+srv://AdminDenis:DenisMongo@cluster0.sfxuk.mongodb.net/CLOUD_45_2021?retryWrites=true&w=majority'
 
 stages:
 - stage: Build
@@ -33,7 +35,9 @@ stages:
         dockerfile: '$(Build.SourcesDirectory)/StoreAPI/Dockerfile'
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: latest
-
+      env:
+        DatabaseSettings__DatabaseName: $(databaseName)
+        DatabaseSettings__ConnectionString: $(connectionString)
           ## Add the below snippet at the end of your pipeline
     - task: AzureWebAppContainer@1
       displayName: 'Azure Web App on Container Deploy'
