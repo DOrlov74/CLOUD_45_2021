@@ -1,0 +1,8 @@
+{
+  "DatabaseSettings:DatabaseName": "CLOUD_45_2021",
+  "DatabaseSettings:ConnectionString": "mongodb+srv://AdminDenis:DenisMongo@cluster0.sfxuk.mongodb.net/CLOUD_45_2021?retryWrites=true&w=majority",
+  "CloudinarySettings:CloudName": "danscloud21",
+  "CloudinarySettings:ApiKey": "458823646281568",
+  "CloudinarySettings:ApiSecret": "DHhMaaaobw6fM_s1zG35dLn-Das",
+  "Kestrel:Certificates:Development:Password": "crypticpassword"
+}
