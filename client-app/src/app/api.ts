@@ -13,6 +13,7 @@ const sleep=(delay: number)=>{
 }
 
 axios.defaults.baseURL=process.env.REACT_APP_API_URL;
+//axios.defaults.baseURL="/api"
 axios.interceptors.request.use(config => {
     const token = window.localStorage.getItem('jwt');
     if(token) config.headers.Authorization = `Bearer ${token}`;
