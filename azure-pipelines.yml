@@ -36,6 +36,7 @@ stages:
       env:
         DatabaseSettings__DatabaseName: "CLOUD_45_2021"
         DatabaseSettings__ConnectionString: "mongodb+srv://AdminDenis:DenisMongo@cluster0.sfxuk.mongodb.net/CLOUD_45_2021?retryWrites=true&w=majority"
+        "ASPNETCORE_ENVIRONMENT": "Production"
           ## Add the below snippet at the end of your pipeline
     - task: AzureWebAppContainer@1
       displayName: 'Azure Web App on Container Deploy'
