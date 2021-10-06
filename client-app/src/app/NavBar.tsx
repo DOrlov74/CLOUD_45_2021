@@ -1,6 +1,6 @@
 import React, {MouseEvent, useState } from "react";
-import { Link, NavLink } from "react-router-dom";
-import { Button, Container, Header, Icon, Menu } from "semantic-ui-react";
+import { NavLink } from "react-router-dom";
+import { Container, Header, Icon, Menu } from "semantic-ui-react";
 import { CartContext } from "../components/CartProvider";
 import { UserContext } from "../components/UserProvider";
 

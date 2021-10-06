@@ -1,6 +1,6 @@
 import React, { SyntheticEvent, useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { Button, Card, Divider, Header, Icon, Image } from "semantic-ui-react";
+import { Button, Card, Divider, Header, Icon } from "semantic-ui-react";
 import api from "../app/api";
 import { Store } from "../models/store";
 import { UserContext } from "./UserProvider";
