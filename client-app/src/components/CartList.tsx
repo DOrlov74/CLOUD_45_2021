@@ -3,18 +3,24 @@ import { Header, Grid, Label, Segment, Button, Card } from "semantic-ui-react";
 import api from "../app/api";
 import { SalesDetail } from "../models/salesdetail";
 import { CartContext } from "./CartProvider";
+import { UserContext } from "./UserProvider";
 
 export default function CartList(){
     const cartCtx=React.useContext(CartContext);
+    const userCtx=React.useContext(UserContext);
     const [submiting, setSubmiting]=useState(false);
     const [totalProducts, setTotalProducts]=useState<number>(0);
     const [totalPrice, setTotalPrice]=useState<number>(0);
     useEffect(()=>{
-            cartCtx.fillUserSales();
-            cartCtx.fillCartProducts();
-            cartCtx.fillUserSalesDetails();
-            cartCtx.fillActiveSalesDetails();
-    }, [])
+        cartCtx.fillUserSales();
+    }, [userCtx.user])
+
+    useEffect(()=>{
+        cartCtx.fillUserSalesDetails();
+        cartCtx.fillActiveSalesDetails();
+        cartCtx.fillCartProducts();
+    }, [cartCtx.activeSale, cartCtx.setActiveSale])
+
     useEffect(()=>{
         let price = 0;
         cartCtx.activeSalesDetails.map(d=>{
