@@ -11,15 +11,19 @@ export default function CartList(){
     const [submiting, setSubmiting]=useState(false);
     const [totalProducts, setTotalProducts]=useState<number>(0);
     const [totalPrice, setTotalPrice]=useState<number>(0);
-    useEffect(()=>{
-        cartCtx.fillUserSales();
-    }, [userCtx.user])
+    // useEffect(()=>{
+    //     cartCtx.fillUserSales();
+    // }, [userCtx.user])
 
-    useEffect(()=>{
-        cartCtx.fillUserSalesDetails();
-        cartCtx.fillActiveSalesDetails();
-        cartCtx.fillCartProducts();
-    }, [cartCtx.activeSale, cartCtx.setActiveSale])
+    // useEffect(()=>{
+    //     cartCtx.fillCartProducts();
+    //     cartCtx.fillActiveSalesDetails();
+    // }, [cartCtx.activeSale])
+
+    // useEffect(()=>{
+    //     cartCtx.fillUserSalesDetails();        
+    // }, [cartCtx.userSales])
+
 
     useEffect(()=>{
         let price = 0;

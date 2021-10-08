@@ -15,7 +15,7 @@ export default function ProductList() {
     const [submiting, setSubmiting]=useState(false);
     const newSalesDetail={
         SalesDetailId: '',
-        SaleID: '',
+        SaleId: '',
         Seq: 0,
         Product: '',
         Quantity: 0,
@@ -23,14 +23,14 @@ export default function ProductList() {
         LineTotal: 0,
     }
 
-    useEffect(()=>{
-        if(userCtx.user) {
-            cartCtx.fillUserSales();
-            cartCtx.fillCartProducts();
-            cartCtx.fillUserSalesDetails();
-            cartCtx.fillActiveSalesDetails();
-          }
-    }, [])
+    // useEffect(()=>{
+    //     if(userCtx.user) {
+    //         cartCtx.fillUserSales();
+    //         cartCtx.fillCartProducts();
+    //         cartCtx.fillUserSalesDetails();
+    //         cartCtx.fillActiveSalesDetails();
+    //       }
+    // }, [])
 
     function handleDeleteProduct(e: SyntheticEvent<HTMLButtonElement>, id:string){
         setTarget(e.currentTarget.name);
@@ -56,7 +56,7 @@ export default function ProductList() {
             }
         } else { 
             const tempSalesDetail = newSalesDetail; 
-            tempSalesDetail.SaleID = (cartCtx.activeSale !== null ? cartCtx.activeSale.SaleId : '');
+            tempSalesDetail.SaleId = (cartCtx.activeSale !== null ? cartCtx.activeSale.SaleId : '');
             tempSalesDetail.Product = product.ProductId;
             tempSalesDetail.UnitPrice = product.UnitPrice ? product.UnitPrice : 0;
             tempSalesDetail.Quantity = 1;

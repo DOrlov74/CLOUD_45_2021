@@ -41,6 +41,7 @@ function App() {
   function handleLogout(){
 //    api.Account.logout().then(()=>{
       userCtx.setUser(null);
+      cartCtx.clearCart();
       window.localStorage.removeItem('jwt');
       console.log('Successfully loged out');
 //     })

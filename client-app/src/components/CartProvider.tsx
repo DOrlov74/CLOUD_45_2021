@@ -21,7 +21,8 @@ const saleContextDefault: SaleContext = {
     fillUserSales: null,
     fillCartProducts: null,
     fillUserSalesDetails: null,
-    fillActiveSalesDetails: null
+    fillActiveSalesDetails: null,
+    clearCart: null
 }
 
 export const CartContext=createContext<SaleContext>(saleContextDefault);
@@ -63,10 +64,13 @@ export default function CartProvider({children}: Props){
     }, [userCtx.user])
 
     useEffect(()=>{
-        fillUserSalesDetails();
-        fillActiveSalesDetails();
         fillCartProducts();
-    }, [activeSale, setActiveSale])
+        fillActiveSalesDetails();
+    }, [activeSale])
+
+    useEffect(()=>{
+        fillUserSalesDetails();        
+    }, [userSales])
 
     function fillSales(){
         api.Sales.list().then(response => {
@@ -125,24 +129,26 @@ export default function CartProvider({children}: Props){
     function fillUserSalesDetails(){
         if(userSales.length >0){
             console.log('userSale count '+ userSales.length);
-            if(userSalesDetails.length > 0){
-                setUserSalesDetails([]);
-            }
+            // if(userSalesDetails.length > 0){
+            //     setUserSalesDetails([]);
+            //     console.log("User Sales Details Cleared");
+            // }
             userSales.map(s=>{
-                const saleDetail = salesDetails?.find(d=>d.SaleID === s.SaleId);
+                const saleDetail = salesDetails?.find(d=>d.SaleId === s.SaleId);
                 console.log('Product found in User order: ' + saleDetail?.Product);
-                if(saleDetail !== undefined){
+                if(saleDetail !== undefined && !userSalesDetails.some(d => d.SalesDetailId === saleDetail.SalesDetailId)){
                     setUserSalesDetails([...userSalesDetails, saleDetail]);
-                }
+                    console.log("User Sale Detail updated")
+                } 
             })
         }
     }
 
     function fillCartProducts(){
         if(activeSale?.SalesDetails !== []){
-            if(cartProducts.length > 0){
-                setcartProducts([]);
-            }
+            // if(cartProducts.length > 0){
+            //     setcartProducts([]);
+            // }
             activeSale?.SalesDetails.map(d=>{
                 const product = products.find(p=>p.ProductId === d.Product);
                 console.log('Product in Cart:' + product?.ProductName)
@@ -156,12 +162,13 @@ export default function CartProvider({children}: Props){
 
     function fillActiveSalesDetails(){
         if(activeSale.SalesDetails.length >0){
-            if(activeSalesDetails.length > 0){
-                setActiveSalesDetails([]);
-            }
+            // if(activeSalesDetails.length > 0){
+            //     setActiveSalesDetails([]);
+            //     console.log("Active Sales Details Cleared");
+            // }
             activeSale.SalesDetails.map(d => {
                 const detail = salesDetails?.find(sd => sd.SalesDetailId === d.SalesDetailId);
-                if(detail !== undefined){
+                if(detail !== undefined && !activeSalesDetails.some(d => d.SalesDetailId === detail.SalesDetailId)){
                     setActiveSalesDetails([...activeSalesDetails, detail]);
                     console.log(`active cart product details with id: ${detail.Product} updated`);
                 }
@@ -182,6 +189,14 @@ export default function CartProvider({children}: Props){
         }  
     }
 
+    function clearCart(){
+        setUserSales([]);
+        setcartProducts([]);
+        setActiveSale(newSale);
+        setUserSalesDetails([]);
+        setActiveSalesDetails([]);
+    }
+
     return(
         <CartContext.Provider value={{
             userSales, activeSale, setActiveSale, 
@@ -191,7 +206,8 @@ export default function CartProvider({children}: Props){
             families, cartProducts, 
             fillUserSales, fillCartProducts,
             fillUserSalesDetails,
-            fillActiveSalesDetails}}>
+            fillActiveSalesDetails,
+            clearCart}}>
             {children}
         </CartContext.Provider>
     );

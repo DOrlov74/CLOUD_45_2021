@@ -27,5 +27,6 @@ export interface SaleContext {
     fillUserSales: any,
     fillCartProducts: any,
     fillUserSalesDetails: any,
-    fillActiveSalesDetails: any
+    fillActiveSalesDetails: any,
+    clearCart: any
 }
