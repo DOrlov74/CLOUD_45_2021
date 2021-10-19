@@ -11,11 +11,12 @@ namespace StoreAPI.Models
     public class Photo
     {
         [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
         public string Url { get; set; }
         public bool IsMain { get; set; }
         [ForeignKey("User")]
         public Guid UserId { get; set; }
+        [ForeignKey("Product")]
+        public string ProductId { get; set; }
     }
 }

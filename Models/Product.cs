@@ -14,6 +14,7 @@ namespace StoreAPI.Models
         public Product()
         {
             Stocks = new HashSet<Stock>();
+            Photos = new HashSet<Photo>();
         }
 
         [BsonId]
@@ -51,5 +52,6 @@ namespace StoreAPI.Models
         public virtual Family Family { get; set; }
 
         public virtual ICollection<Stock> Stocks { get; set; }
+        public virtual ICollection<Photo> Photos { get; set; }
     }
 }

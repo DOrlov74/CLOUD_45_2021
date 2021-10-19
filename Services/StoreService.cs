@@ -571,6 +571,12 @@ namespace StoreAPI.Services
                 userIn.Photos.Add(photo);
                 _users.ReplaceOne(user => user.Id == userIn.Id, userIn);
             }
+            if (photo.ProductId != "")
+            {
+                Product productIn = _products.Find(product => product.ProductId == photo.ProductId).FirstOrDefault();
+                productIn.Photos.Add(photo);
+                _products.ReplaceOne(product => product.ProductId == productIn.ProductId, productIn);
+            }
             return photo;
         }
 
@@ -578,15 +584,45 @@ namespace StoreAPI.Services
         {
             Photo oldPhoto = _photos.Find(photo => photo.Id == id).FirstOrDefault();
             photoIn.Id = oldPhoto.Id;
-            if (photoIn.UserId != oldPhoto.UserId && photoIn.UserId != Guid.Empty)
+            if (photoIn.UserId != Guid.Empty)
             {
-                //  Update User
-                User oldUser = _users.Find(user => user.Id == oldPhoto.UserId).FirstOrDefault();
-                oldUser.Photos.Remove(oldUser.Photos.First(photo => photo.Id == oldPhoto.Id));
-                _users.ReplaceOne(user => user.Id == oldUser.Id, oldUser);
-                User userIn = _users.Find(user => user.Id == photoIn.UserId).FirstOrDefault();
-                userIn.Photos.Add(photoIn);
-                _users.ReplaceOne(user => user.Id == userIn.Id, userIn);
+                if (photoIn.UserId != oldPhoto.UserId) 
+                { 
+                    //  Update User
+                    User oldUser = _users.Find(user => user.Id == oldPhoto.UserId).FirstOrDefault();
+                    oldUser.Photos.Remove(oldUser.Photos.First(photo => photo.Id == oldPhoto.Id));
+                    _users.ReplaceOne(user => user.Id == oldUser.Id, oldUser);
+                    User userIn = _users.Find(user => user.Id == photoIn.UserId).FirstOrDefault();
+                    userIn.Photos.Add(photoIn);
+                    _users.ReplaceOne(user => user.Id == userIn.Id, userIn);
+                } else
+                {
+                    //  Update User
+                    User oldUser = _users.Find(user => user.Id == oldPhoto.UserId).FirstOrDefault();
+                    oldUser.Photos.Remove(oldUser.Photos.First(photo => photo.Id == oldPhoto.Id));
+                    oldUser.Photos.Add(photoIn);
+                    _users.ReplaceOne(user => user.Id == oldUser.Id, oldUser);
+                }
+            }
+            if (photoIn.ProductId != oldPhoto.ProductId && photoIn.ProductId != "")
+            {
+                if (photoIn.ProductId != oldPhoto.ProductId) 
+                { 
+                    //  Update Product
+                    Product oldProduct = _products.Find(product => product.ProductId == oldPhoto.ProductId).FirstOrDefault();
+                    oldProduct.Photos.Remove(oldProduct.Photos.First(photo => photo.Id == oldPhoto.Id));
+                    _products.ReplaceOne(product => product.ProductId == oldProduct.ProductId, oldProduct);
+                    Product productIn = _products.Find(product => product.ProductId == photoIn.ProductId).FirstOrDefault();
+                    productIn.Photos.Add(photoIn);
+                    _products.ReplaceOne(product => product.ProductId == productIn.ProductId, productIn);
+                }else
+                {
+                    //  Update Product
+                    Product oldProduct = _products.Find(product => product.ProductId == oldPhoto.ProductId).FirstOrDefault();
+                    oldProduct.Photos.Remove(oldProduct.Photos.First(photo => photo.Id == oldPhoto.Id));
+                    oldProduct.Photos.Add(photoIn);
+                    _products.ReplaceOne(product => product.ProductId == oldProduct.ProductId, oldProduct);
+                }
             }
             _photos.ReplaceOne(photo => photo.Id == id, photoIn);
         }
@@ -598,6 +634,12 @@ namespace StoreAPI.Services
                 User userIn = _users.Find(user => user.Id == photoIn.UserId).FirstOrDefault();
                 userIn.Photos.Remove(userIn.Photos.First(photo => photo.Id == photoIn.Id));
                 _users.ReplaceOne(user => user.Id == userIn.Id, userIn);
+            }
+            if (photoIn.ProductId != "")
+            {
+                Product productIn = _products.Find(product => product.ProductId == photoIn.ProductId).FirstOrDefault();
+                productIn.Photos.Remove(productIn.Photos.First(photo => photo.Id == photoIn.Id));
+                _products.ReplaceOne(product => product.ProductId == productIn.ProductId, productIn);
             }
             _photos.DeleteOne(photo => photo.Id == photoIn.Id);
         }

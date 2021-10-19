@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 import { Family } from '../models/family';
+import { Photo, UploadResult } from '../models/photo';
 import { Product } from '../models/product';
 import { Sale } from '../models/sale';
 import { SalesDetail } from '../models/salesdetail';
@@ -94,6 +95,20 @@ const Account={
     register: (user: UserDto)=>requests.post<User>('/register', user),
     logout: ()=>requests.get('/logout')
 }
+const Images={
+    upload: (file: Blob) => {
+        let formData = new FormData();
+        formData.append('File', file);
+        return axios.post<UploadResult>('/photo/add', formData, {
+            headers: {'Content-type': 'multipart/form-data'}
+        })
+    },
+    list: ()=>requests.getList<Photo[]>('/photo'),
+    details: (id: string)=>requests.get<Photo>(`/photo/${id}`),
+    create: (photo: Photo)=>requests.post<Photo>('/photo', photo),
+    update: (photo: Photo)=>requests.put<Photo>(`/photo/${photo.Id}`, photo),
+    delete: (id: string)=>requests.del<Photo>(`/photo/${id}`)
+}
 const api={
     Stores,
     Sales,
@@ -102,6 +117,7 @@ const api={
     Families,
     Users,
     Roles,
-    Account
+    Account,
+    Images
 }
 export default api;

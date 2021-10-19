@@ -12,3 +12,20 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.image_container{
+  position: relative;
+  display: inline-block;
+}
+
+.image_label{
+  position: absolute;
+  top: -5px;
+  left: -5px;
+}
+
+.image_delete{
+  position: absolute;
+  bottom: -5px;
+  right: -5px;
+}

@@ -53,7 +53,7 @@ function App() {
   return (
     <div className="App">
         <NavBar logout={handleLogout}/>
-        <Container style={{marginTop:'7em'}}>
+        <Container style={{marginTop:'5em'}}>
           <Route exact path='/' component={HomePage}/>
           <Route path='/store' component={StoreList}/>
           <Route path={['/newstore', '/editstore/:id']} component={StoreForm}/>

@@ -1,6 +1,6 @@
 import React, {MouseEvent, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { Container, Header, Icon, Menu } from "semantic-ui-react";
+import { Container, Header, Icon, Label, Menu, Image } from "semantic-ui-react";
 import { CartContext } from "../components/CartProvider";
 import { UserContext } from "../components/UserProvider";
 
@@ -36,10 +36,12 @@ export default function NavBar({logout}: Props){
                 <Menu.Menu position='right'>
                     <Menu.Item as={NavLink} to={`/cartlist/${cartCtx.activeSale?.SaleId}`} name='cartlist' onClick={handleClick}>
                         <Icon disabled={userCtx.user === null} name='cart' size='large' onClick={handleClick}/>
+                        {cartCtx.cartProducts.length != 0 ? <Label color='red' floating circular>{cartCtx.cartProducts.length}</Label>:<></>}
                     </Menu.Item>
                     {(userCtx.user !== null)?
                     <>
                     <Menu.Item as={NavLink} to={`/edituser/${userCtx.user.Id}`} name='setting' onClick={handleClick}>
+                    {userCtx.userPhotos.length > 0 ? <Image src={userCtx.userPhotos.find(p => p.IsMain)?.Url} avatar />:<></>}
                     {userCtx.user.UserName}
                     <Icon name='setting' size='large' style={{marginLeft:"10px"}} />
                     </Menu.Item>
